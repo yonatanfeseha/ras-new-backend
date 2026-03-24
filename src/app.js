@@ -2,21 +2,37 @@ import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
+import memberRoutes from "./routes/members.js";
 
 dotenv.config();
 
 const app = express();
 
+// middleware
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
 // routes
-import userRoutes from "./routes/members.js";
-app.use("/api/users", userRoutes);
+app.use("/members", memberRoutes);
 
+// health check
 app.get("/", (req, res) => {
-  res.send("API running...");
+  res.send("API is running...");
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+
+  res.status(err.status || 500).json({
+    message: err.message || "Server Error",
+  });
 });
 
 export default app;

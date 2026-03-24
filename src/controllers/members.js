@@ -1,10 +1,11 @@
-import { getUsers } from "../models/userModel.js";
+import { getAllMembers } from "../models/members.js";
 
-export const getAllUsers = async (req, res) => {
+export const getMembers = async (req, res) => {
   try {
-    const users = await getUsers();
+    const users = await getAllMembers();
     res.json(users);
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 };
