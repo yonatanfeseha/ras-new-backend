@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
 import memberRoutes from "./routes/members.js";
+import statsRoutes from "./routes/stats.js";
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(morgan("dev"));
 
 // routes
 app.use("/members", memberRoutes);
+app.use("/stats", statsRoutes);
 
 // health check
 app.get("/", (req, res) => {
