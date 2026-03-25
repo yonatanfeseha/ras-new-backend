@@ -1,5 +1,51 @@
 import { db } from "../config/db.js";
 
+// 🔹 Create coach
+export const createCoach = async (coach) => {
+  const { name, gender, b_date, phone, url, trainingTypes, schedules } = coach;
+
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // 1. Insert coach
+    const [result] = await conn.query(
+      `INSERT INTO coach (name, gender, b_date, phone, url)
+       VALUES (?, ?, ?, ?, ?)`,
+      [name, gender, b_date, phone, url],
+    );
+
+    const coachId = result.insertId;
+
+    // 2. Insert training types
+    for (const typeId of trainingTypes) {
+      await conn.query(
+        `INSERT INTO coach_training_types (coach_id, training_type_id)
+         VALUES (?, ?)`,
+        [coachId, typeId],
+      );
+    }
+
+    // 3. Insert schedules
+    for (const scheduleId of schedules) {
+      await conn.query(
+        `INSERT INTO coach_schedules (coach_id, schedule_id)
+         VALUES (?, ?)`,
+        [coachId, scheduleId],
+      );
+    }
+
+    await conn.commit();
+
+    return coachId;
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    conn.release();
+  }
+};
+
 // 🔹 Get all coaches with training + schedule
 export const getAllCoaches = async () => {
   const [rows] = await db.query(`
@@ -26,7 +72,7 @@ export const getAllCoaches = async () => {
 
     LEFT JOIN schedule s 
       ON s.id = cs.schedule_id
-      
+
 
     GROUP BY c.id
   `);

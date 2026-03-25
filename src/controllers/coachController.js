@@ -1,4 +1,23 @@
 import { getAllCoaches, getCoachById } from "../models/coachModel.js";
+import { createCoach } from "../models/coachModel.js";
+
+// 🔹 POST /coaches
+export const addCoach = async (req, res) => {
+  try {
+    const coachId = await createCoach(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Coach created successfully",
+      coachId,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
 
 // 🔹 GET /coaches
 export const getCoaches = async (req, res) => {
