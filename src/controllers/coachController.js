@@ -1,4 +1,8 @@
-import { getAllCoaches, getCoachById } from "../models/coachModel.js";
+import {
+  getAllCoaches,
+  getCoachById,
+  deleteCoachById,
+} from "../models/coachModel.js";
 import { createCoach } from "../models/coachModel.js";
 
 // 🔹 POST /coaches
@@ -59,5 +63,25 @@ export const getCoach = async (req, res) => {
       success: false,
       message: err.message,
     });
+  }
+};
+
+// delete coach
+export const deleteCoach = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await deleteCoachById(id);
+
+    if (!deleted) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Coach not found" });
+    }
+
+    res.json({ success: true, message: "Coach deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };

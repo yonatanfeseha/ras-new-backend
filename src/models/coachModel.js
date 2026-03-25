@@ -118,3 +118,14 @@ export const getCoachById = async (id) => {
 
   return coach;
 };
+// Delete a coach by ID
+export const deleteCoachById = async (id) => {
+  // Delete from connecting tables first to avoid foreign key errors
+  await db.query("DELETE FROM coach_training_types WHERE coach_id = ?", [id]);
+  await db.query("DELETE FROM coach_schedules WHERE coach_id = ?", [id]);
+
+  // Then delete from main coach table
+  const [result] = await db.query("DELETE FROM coach WHERE id = ?", [id]);
+
+  return result.affectedRows; // returns 1 if deleted, 0 if no coach found
+};
