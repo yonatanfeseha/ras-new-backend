@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 import memberRoutes from "./routes/members.js";
 import statsRoutes from "./routes/stats.js";
+import coachRoutes from "./routes/coachRoutes.js";
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(morgan("dev"));
 // routes
 app.use("/members", memberRoutes);
 app.use("/stats", statsRoutes);
+app.use("/coaches", coachRoutes);
 
 // health check
 app.get("/", (req, res) => {
