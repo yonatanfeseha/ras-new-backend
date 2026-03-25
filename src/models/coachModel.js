@@ -8,22 +8,27 @@ export const getAllCoaches = async () => {
       c.name,
       c.phone,
       c.url,
+      c.gender,
 
-      CASE ctt.training_type_id
-        WHEN 1 THEN 'Aerobics'
-        WHEN 2 THEN 'Machine'
-      END AS training_type,
-
-      CASE cs.schedule_id
-        WHEN 1 THEN 'MWF: Morning'
-        WHEN 2 THEN 'MWF: Evening'
-        WHEN 3 THEN 'TTS: Morning'
-        WHEN 4 THEN 'TTS: Evening'
-      END AS schedule
+      GROUP_CONCAT(DISTINCT tt.t_type) AS training_type,
+      GROUP_CONCAT(DISTINCT CONCAT(s.date, ': ', s.time)) AS schedule
 
     FROM coach c
-    LEFT JOIN coach_training_types ctt ON c.id = ctt.coach_id
-    LEFT JOIN coach_schedules cs ON c.id = cs.coach_id
+
+    LEFT JOIN coach_training_types ctt 
+      ON c.id = ctt.coach_id
+
+    LEFT JOIN training_type tt 
+      ON tt.id = ctt.training_type_id
+
+    LEFT JOIN coach_schedules cs 
+      ON c.id = cs.coach_id
+
+    LEFT JOIN schedule s 
+      ON s.id = cs.schedule_id
+      
+
+    GROUP BY c.id
   `);
 
   return rows;
@@ -41,22 +46,26 @@ export const getCoachById = async (id) => {
       c.phone,
       c.url,
 
-      CASE ctt.training_type_id
-        WHEN 1 THEN 'Aerobics'
-        WHEN 2 THEN 'Machine'
-      END AS training_type,
-
-      CASE cs.schedule_id
-        WHEN 1 THEN 'MWF: Morning'
-        WHEN 2 THEN 'MWF: Evening'
-        WHEN 3 THEN 'TTS: Morning'
-        WHEN 4 THEN 'TTS: Evening'
-      END AS schedule
+      GROUP_CONCAT(DISTINCT tt.t_type) AS training_type,
+      GROUP_CONCAT(DISTINCT CONCAT(s.date, ': ', s.time)) AS schedule
 
     FROM coach c
-    LEFT JOIN coach_training_types ctt ON c.id = ctt.coach_id
-    LEFT JOIN coach_schedules cs ON c.id = cs.coach_id
+
+    LEFT JOIN coach_training_types ctt 
+      ON c.id = ctt.coach_id
+
+    LEFT JOIN training_type tt 
+      ON tt.id = ctt.training_type_id
+
+    LEFT JOIN coach_schedules cs 
+      ON c.id = cs.coach_id
+
+    LEFT JOIN schedule s 
+      ON s.id = cs.schedule_id
+
     WHERE c.id = ?
+
+    GROUP BY c.id
   `,
     [id],
   );
