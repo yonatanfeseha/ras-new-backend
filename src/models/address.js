@@ -4,7 +4,7 @@ import db from '../config/db.js';
 export const createAddress = async address => {
   const { sub_city, woreda } = address;
   if (!sub_city || !woreda) {
-    return res.status(400).json({ message: 'All fields required' });
+    throw new Error('All fields are required');
   }
   const [result] = await db.execute(
     'INSERT INTO address (sub_city, woreda) VALUES (?, ?)',

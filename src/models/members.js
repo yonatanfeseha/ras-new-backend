@@ -1,16 +1,12 @@
-import db from "../config/db.js";
+import db from '../config/db.js';
 
 // Create Member
-export const createMember = async (member) => {
-  const {
-    name,
-    gender,
-    b_date,
-    address_id,
-    phone,
-    url,
-    ras_id,
-  } = member;
+export const createMember = async member => {
+  const { name, gender, b_date, address_id, phone, url, ras_id } = member;
+
+  if (!name || !gender || !b_date || !address_id || !phone || !url || !ras_id) {
+    throw new Error('All fields are required');
+  }
 
   const [result] = await db.execute(
     `INSERT INTO members 
@@ -34,7 +30,7 @@ export const getAllMembers = async () => {
 };
 
 // Get Single Member
-export const getMemberById = async (id) => {
+export const getMemberById = async id => {
   const [rows] = await db.execute(
     `
     SELECT m.*, a.sub_city, a.woreda
@@ -50,15 +46,7 @@ export const getMemberById = async (id) => {
 
 // Update Member
 export const updateMember = async (id, member) => {
-  const {
-    name,
-    gender,
-    b_date,
-    address_id,
-    phone,
-    url,
-    ras_id,
-  } = member;
+  const { name, gender, b_date, address_id, phone, url, ras_id } = member;
 
   await db.execute(
     `UPDATE members 
@@ -71,6 +59,6 @@ export const updateMember = async (id, member) => {
 };
 
 // Delete Member
-export const deleteMember = async (id) => {
-  await db.execute("DELETE FROM members WHERE id = ?", [id]);
+export const deleteMember = async id => {
+  await db.execute('DELETE FROM members WHERE id = ?', [id]);
 };
