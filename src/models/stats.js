@@ -1,8 +1,10 @@
-import { db } from "../config/db.js";
+// stats.js
+
+import { db } from '../config/db.js';
 
 export const getStats = async () => {
   // payment stats
-  const [[totals]] = await db.query(`
+  const [[totals]] = await db.execute(`
     SELECT
       COUNT(*) AS totalMembers,
       SUM(payment_status = 1) AS paid,
@@ -12,20 +14,17 @@ export const getStats = async () => {
   `);
 
   // training type stats (map IDs to labels)
-  const [trainingRows] = await db.query(`
+  const [trainingRows] = await db.execute(`
     SELECT 
-      CASE tt.id 
-        WHEN 1 THEN 'Aerobics'
-        WHEN 2 THEN 'Machine'
-      END AS type,
+      tt.t_type AS type,
       COUNT(mt.member_id) AS count
-    FROM training_type tt
+      FROM training_type tt
     LEFT JOIN member_training_types mt ON tt.id = mt.training_type_id
-    GROUP BY tt.id
+    GROUP BY tt.id, tt.t_type;
   `);
 
   // schedule stats (map IDs to labels)
-  const [scheduleRows] = await db.query(`
+  const [scheduleRows] = await db.execute(`
     SELECT 
       CASE s.id
         WHEN 1 THEN 'MWF: Morning'
