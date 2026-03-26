@@ -2,8 +2,8 @@ import {
   getAllCoaches,
   getCoachById,
   deleteCoachById,
-} from "../models/coachModel.js";
-import { createCoach } from "../models/coachModel.js";
+} from "../models/coaches.js";
+import { createCoach } from "../models/coaches.js";
 
 // 🔹 POST /coaches
 export const addCoach = async (req, res) => {
