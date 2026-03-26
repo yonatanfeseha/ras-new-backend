@@ -1,6 +1,6 @@
 // routes/stats.js
 import express from "express";
-import { getStatistics } from "../controllers/statsController.js";
+import { getStatistics } from "../controllers/stats.js";
 
 const router = express.Router();
 

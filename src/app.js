@@ -2,9 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
+
 import memberRoutes from "./routes/members.js";
 import statsRoutes from "./routes/stats.js";
-import coachRoutes from "./routes/coachRoutes.js";
+import coachRoutes from "./routes/coaches.js";
+import trainingTypeRoutes from "./routes/tt.js";
+import scheduleRoutes from "./routes/schedules.js";
+import mNestedRoutes from "./routes/mNested.js";
 
 dotenv.config();
 
@@ -17,9 +21,11 @@ app.use(morgan("dev"));
 
 // routes
 app.use("/members", memberRoutes);
+app.use("/members", mNestedRoutes);
 app.use("/stats", statsRoutes);
 app.use("/coaches", coachRoutes);
-
+app.use("/training-types", trainingTypeRoutes);
+app.use("/schedules", scheduleRoutes);
 // health check
 app.get("/", (req, res) => {
   res.send("API is running...");
