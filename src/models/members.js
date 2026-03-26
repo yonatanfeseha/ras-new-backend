@@ -1,26 +1,76 @@
-import { db } from "../config/db.js";
+import db from "../config/db.js";
 
-export const getAllMembers = async (page = 1, limit = 10) => {
-  page = parseInt(page) || 1;
-  limit = parseInt(limit) || 10;
+// Create Member
+export const createMember = async (member) => {
+  const {
+    name,
+    gender,
+    b_date,
+    address_id,
+    phone,
+    url,
+    ras_id,
+  } = member;
 
-  if (page < 1) page = 1;
-  if (limit > 100) limit = 100;
-
-  const offset = (page - 1) * limit;
-
-  const [rows] = await db.query(
-    "SELECT id, name, phone, ras_id, payment_status FROM members ORDER BY id LIMIT ? OFFSET ?",
-    [limit, offset],
+  const [result] = await db.execute(
+    `INSERT INTO members 
+    (name, gender, b_date, address_id, phone, url, ras_id) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [name, gender, b_date, address_id, phone, url, ras_id]
   );
 
-  const [[{ total }]] = await db.query("SELECT COUNT(*) as total FROM members");
-
-  return {
-    data: rows,
-    total,
-    page,
-    totalPages: Math.ceil(total / limit),
-  };
+  return { id: result.insertId, ...member };
 };
 
+// Get All Members
+export const getAllMembers = async () => {
+  const [rows] = await db.execute(`
+    SELECT m.*, a.sub_city, a.woreda
+    FROM members m
+    LEFT JOIN address a ON m.address_id = a.id
+  `);
+
+  return rows;
+};
+
+// Get Single Member
+export const getMemberById = async (id) => {
+  const [rows] = await db.execute(
+    `
+    SELECT m.*, a.sub_city, a.woreda
+    FROM members m
+    LEFT JOIN address a ON m.address_id = a.id
+    WHERE m.id = ?
+    `,
+    [id]
+  );
+
+  return rows[0];
+};
+
+// Update Member
+export const updateMember = async (id, member) => {
+  const {
+    name,
+    gender,
+    b_date,
+    address_id,
+    phone,
+    url,
+    ras_id,
+  } = member;
+
+  await db.execute(
+    `UPDATE members 
+     SET name=?, gender=?, b_date=?, address_id=?, phone=?, url=?, ras_id=? 
+     WHERE id=?`,
+    [name, gender, b_date, address_id, phone, url, ras_id, id]
+  );
+
+  return { id, ...member };
+};
+
+// Delete Member
+export const deleteMember = async (id) => {
+  await db.execute("DELETE FROM members WHERE id = ?", [id]);
+};
