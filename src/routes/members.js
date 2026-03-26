@@ -1,9 +1,12 @@
-import express from "express";
-import { getMembers } from "../controllers/members.js";
-import { getStatistics } from "../controllers/statsController.js";
+import express from 'express';
+import * as MemberController from '../controllers/member.js';
+
 const router = express.Router();
 
-router.get("/", getMembers);
-router.get("/stats", getStatistics);
+router.post('/', MemberController.createMember);
+router.get('/', MemberController.getMembers);
+router.get('/:id', MemberController.getMember);
+router.put('/:id', MemberController.updateMember);
+router.delete('/:id', MemberController.deleteMember);
 
 export default router;
