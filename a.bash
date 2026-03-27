@@ -14,16 +14,11 @@ npm install express dotenv cors morgan mysql2
 npm install -D nodemon
 
 # Create folders
-mkdir -p src/{controllers,models,routes,middlewares,config,utils}
-mkdir -p tests
+mkdir -p src/{controllers,models,routes,middlewares,config,services}
 
 # Create files
 touch src/app.js src/server.js .env .gitignore README.md
 
-touch src/controllers/userController.js
-touch src/models/userModel.js
-touch src/routes/userRoutes.js
-touch src/config/db.js
 
 # .gitignore
 echo "node_modules

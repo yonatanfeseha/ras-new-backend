@@ -1,0 +1,138 @@
+Table address {
+  id int [pk, increment]
+  sub_city varchar(100)
+  woreda int
+}
+
+Table members {
+  id int [pk, increment]
+  name varchar(100)
+  gender varchar(10)
+  b_date date
+  address_id int
+  phone varchar(20)
+  url varchar(255)
+  ras_id varchar(25)
+  payment_status int
+}
+
+Table member_emergency_contacts {
+  id int [pk, increment]
+  member_id int
+  contact_name varchar(255)
+  phone varchar(20)
+  relationship varchar(50)
+  indexes {
+    member_id [unique]
+  }
+}
+
+Table coach {
+  id int [pk, increment]
+  name varchar(100)
+  gender varchar(10)
+  b_date date
+  address_id int
+  phone varchar(20)
+  url varchar(255)
+}
+
+Table training_type {
+  id int [pk, increment]
+  t_type varchar(100)
+}
+
+Table schedule {
+  id int [pk, increment]
+  date varchar(100)   // e.g. Monday
+  time varchar(50)    // e.g. 8:00 AM
+}
+
+Table health {
+  id int [pk, increment]
+  member_id int
+  height int
+  weight int
+  issue varchar(255)
+  injury varchar(255)
+}
+
+Table member_coaches {
+  member_id int
+  coach_id int
+  indexes {
+    (member_id, coach_id) [pk]
+  }
+}
+
+Table coach_schedules {
+  coach_id int
+  schedule_id int
+  indexes {
+    (coach_id, schedule_id) [pk]
+  }
+}
+
+Table member_schedules {
+  member_id int
+  schedule_id int
+  indexes {
+    (member_id, schedule_id) [pk]
+  }
+}
+
+Table member_training_types {
+  member_id int
+  training_type_id int
+  indexes {
+    (member_id, training_type_id) [pk]
+  }
+}
+
+Table coach_training_types {
+  coach_id int
+  training_type_id int
+  indexes {
+    (coach_id, training_type_id) [pk]
+  }
+}
+
+
+//// for auth
+
+Table users {
+  id int [pk, increment]
+  email varchar(255) [unique]
+  password varchar(255)
+  role enum('admin','coach','member')
+  member_id int [null]
+  coach_id int [null]
+}
+
+//// RELATIONSHIPS
+Ref: members.address_id > address.id
+Ref: coach.address_id > address.id
+
+Ref: health.member_id > members.id
+Ref: member_emergency_contacts.member_id > members.id
+
+Ref: member_coaches.member_id > members.id
+Ref: member_coaches.coach_id > coach.id
+
+Ref: coach_schedules.coach_id > coach.id
+Ref: coach_schedules.schedule_id > schedule.id
+
+Ref: member_schedules.member_id > members.id
+Ref: member_schedules.schedule_id > schedule.id
+
+Ref: member_training_types.member_id > members.id
+Ref: member_training_types.training_type_id > training_type.id
+
+Ref: coach_training_types.coach_id > coach.id
+Ref: coach_training_types.training_type_id > training_type.id
+
+
+//// for auth 
+
+Ref: users.member_id > members.id
+Ref: users.coach_id > coach.id
