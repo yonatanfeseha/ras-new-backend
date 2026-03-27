@@ -76,13 +76,11 @@ export const assignMemberSchedules = async (memberId, scheduleIds) => {
 };
 
 // 🔹 Remove a schedule from a member
-export const removeMemberSchedule = async (memberId, scheduleId) => {
+export const removeMemberSchedules = async memberId => {
   const [result] = await db.query(
-    `DELETE FROM member_schedules
-     WHERE member_id = ? AND schedule_id = ?`,
-    [memberId, scheduleId]
+    `DELETE FROM member_schedules WHERE member_id = ?`,
+    [memberId]
   );
-
   return result.affectedRows;
 };
 
@@ -115,18 +113,6 @@ export const assignCoachSchedules = async (coachId, scheduleIds) => {
 
   return result;
 };
-
-// 🔹 Remove schedule from a coach
-export const removeCoachSchedule = async (coachId, scheduleId) => {
-  const [result] = await db.query(
-    `DELETE FROM coach_schedules
-     WHERE coach_id = ? AND schedule_id = ?`,
-    [coachId, scheduleId]
-  );
-
-  return result.affectedRows;
-};
-
 // 🔹 Get coach schedules
 export const getCoachSchedules = async coachId => {
   const [rows] = await db.query(
@@ -138,4 +124,12 @@ export const getCoachSchedules = async coachId => {
   );
 
   return rows;
+};
+// 🔹 Remove schedule from a coach
+export const removeCoachSchedule = async coachId => {
+  const [result] = await db.query(
+    `DELETE FROM coach_schedules WHERE coach_id = ?`,
+    [coachId]
+  );
+  return result.affectedRows;
 };

@@ -10,6 +10,8 @@ import scheduleRoutes from './routes/schedule.routes.js';
 import trainingTypeRoutes from './routes/trainingType.routes.js';
 import statsRoutes from './routes/stats.routes.js';
 import coachRoutes from './routes/coach.routes.js';
+import memberServiceRoutes from './routes/memberService.routes.js';
+import coachServiceRoutes from './routes/coachService.routes.js';
 
 dotenv.config();
 
@@ -28,8 +30,10 @@ app.use('/api/schedules', scheduleRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/coaches', coachRoutes);
 app.use('/api/training-types', trainingTypeRoutes);
+app.use('/api/member-service', memberServiceRoutes);
+app.use('/api/coach-service', coachServiceRoutes);
 // health check
-app.get('/api', (req, res) => {
+app.get('/', (req, res) => {
   res.send('API is running...');
 });
 

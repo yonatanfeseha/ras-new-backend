@@ -1,11 +1,15 @@
-import * as memberModel from '../models/member.js';
-import * as healthModel from '../models/health.js';
-import * as emergencyModel from '../models/emergency.js';
-import * as scheduleModel from '../models/schedule.js';
-import * as trainingModel from '../models/trainingType.js';
-import * as coachModel from '../models/coach.js';
 
-export const getFullMemberProfile = async memberId => {
+import * as memberModel from "../models/member.js";
+import * as healthModel from "../models/health.js";
+import * as emergencyModel from "../models/emergency.js";
+import * as scheduleModel from "../models/schedule.js";
+import * as trainingModel from "../models/trainingType.js";
+import * as coachModel from "../models/coach.js";
+
+// =============================
+// FULL PROFILE
+// =============================
+export const getFullMemberProfile = async (memberId) => {
   const member = await memberModel.getMemberById(memberId);
   if (!member) return null;
 
@@ -28,49 +32,45 @@ export const getFullMemberProfile = async memberId => {
   };
 };
 
-export const registerMember = async data => {
-  const connection = await db.getConnection();
-
-  try {
-    await connection.beginTransaction();
-
-    // 1. create member
-    const member = await memberModel.createMember(data);
-
-    const memberId = member.id;
-
-    // 2. optional inserts
-    if (data.health) {
-      await healthModel.createHealth(memberId, data.health, connection);
-    }
-
-    if (data.emergency) {
-      await emergencyModel.createEmergencyContact(
-        memberId,
-        data.emergency,
-        connection
-      );
-    }
-
-    if (data.scheduleIds) {
-      await scheduleModel.assignMemberSchedules(memberId, data.scheduleIds);
-    }
-
-    if (data.trainingTypeIds) {
-      await trainingModel.assignTrainingTypes(memberId, data.trainingTypeIds);
-    }
-
-    if (data.coachIds) {
-      await coachModel.assignCoaches(memberId, data.coachIds);
-    }
-
-    await connection.commit();
-
-    return { id: memberId };
-  } catch (error) {
-    await connection.rollback();
-    throw error;
-  } finally {
-    connection.release();
+export const deleteMemberFull = async (memberId) => {
+  // 🔹 check existence
+  const member = await memberModel.getMemberById(memberId);
+  if (!member) {
+    throw new Error('Member not found');
   }
+
+  // 🔹 delete relations first, then member
+  await Promise.all([
+    healthModel.deleteHealth(memberId),
+    emergencyModel.deleteEmergencyContact(memberId),
+    scheduleModel.removeMemberSchedules(memberId),
+    trainingModel.removeMemberTrainingTypes(memberId),
+  ]);
+
+  await memberModel.deleteMember(memberId);
+
+  return {
+    message: 'Member deleted successfully',
+  };
+};
+
+export const registerMemberFull = async (memberData) => {
+  const { name, gender, b_date, health, emergency, scheduleIds, trainingTypeIds } = memberData;
+
+  // 🔹 Create member
+  const memberId = await memberModel.createMember({ name, gender, b_date });
+
+  // 🔹 Create health and emergency records
+  await Promise.all([
+    healthModel.createHealth({ memberId, ...health }),
+    emergencyModel.createEmergencyContact({ memberId, ...emergency }),
+  ]);
+
+  // 🔹 Assign schedules and training types
+  await Promise.all([
+    scheduleModel.assignMemberSchedules(memberId, scheduleIds),
+    trainingModel.assignTrainingTypes(memberId, trainingTypeIds),
+  ]);
+
+  return { memberId };
 };

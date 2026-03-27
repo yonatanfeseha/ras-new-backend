@@ -66,11 +66,10 @@ export const assignTrainingTypes = async (memberId, typeIds) => {
 };
 
 // 🔹 Remove training type from member
-export const removeTrainingType = async (memberId, typeId) => {
+export const removeMemberTrainingTypes = async (memberId) => {
   const [result] = await db.query(
-    `DELETE FROM member_training_types
-     WHERE member_id = ? AND training_type_id = ?`,
-    [memberId, typeId]
+    `DELETE FROM member_training_types WHERE member_id = ?`,
+    [memberId]
   );
   return result.affectedRows;
 };
@@ -102,11 +101,10 @@ export const assignTrainingTypesToCoach = async (coachId, typeIds) => {
 };
 
 // 🔹 Remove a training type from a coach
-export const removeCoachTrainingType = async (coachId, typeId) => {
+export const removeCoachTrainingType = async (coachId) => {
   const [result] = await db.query(
-    `DELETE FROM coach_training_types
-     WHERE coach_id = ? AND training_type_id = ?`,
-    [coachId, typeId]
+    `DELETE FROM coach_training_types WHERE coach_id = ?`,
+    [coachId]
   );
   return result.affectedRows;
 };
