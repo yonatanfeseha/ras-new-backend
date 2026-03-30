@@ -18,9 +18,9 @@ export const createCoach = async (data) => {
   const [result] = await db.query(
     `INSERT INTO coach (name, gender, b_date, address_id, phone, url)
      VALUES (?, ?, ?, ?, ?, ?)`,
-    [name, gender, b_date, address_id, phone, url]
+    [name, gender, b_date, address_id, phone, url],
   );
-  return { id: result.insertId, ...data };
+  return result.insertId;
 };
 
 // 🔹 Update coach
@@ -31,7 +31,7 @@ export const updateCoach = async (id, data) => {
     `UPDATE coach
      SET name = ?, gender = ?, b_date = ?, address_id = ?, phone = ?, url = ?
      WHERE id = ?`,
-    [name, gender, b_date, address_id, phone, url, id]
+    [name, gender, b_date, address_id, phone, url, id],
   );
 
   return result.affectedRows;
@@ -52,7 +52,7 @@ export const getMemberCoaches = async (memberId) => {
      FROM member_coaches mc
      JOIN coach c ON mc.coach_id = c.id
      WHERE mc.member_id = ?`,
-    [memberId]
+    [memberId],
   );
   return rows;
 };
@@ -65,7 +65,7 @@ export const assignCoaches = async (memberId, coachIds) => {
     `INSERT INTO member_coaches (member_id, coach_id)
      VALUES ?
      ON DUPLICATE KEY UPDATE coach_id = coach_id`,
-    [values]
+    [values],
   );
   return result;
 };
@@ -75,7 +75,7 @@ export const removeCoach = async (memberId, coachId) => {
   const [result] = await db.query(
     `DELETE FROM member_coaches
      WHERE member_id = ? AND coach_id = ?`,
-    [memberId, coachId]
+    [memberId, coachId],
   );
   return result.affectedRows;
 };

@@ -115,7 +115,6 @@ export const deleteCoach = async (req, res) => {
   }
 };
 
-
 // =============================
 // 🔥 MEMBER-COACH RELATION
 // =============================

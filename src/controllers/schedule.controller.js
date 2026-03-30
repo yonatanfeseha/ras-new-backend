@@ -44,7 +44,11 @@ export const createSchedule = async (req, res) => {
       time,
     });
   } catch (error) {
-    res.status(500).json({ error: "Failed to create schedule" });
+    console.error("CREATE SCHEDULE ERROR:", error); // 👈 log full error
+
+    res.status(500).json({
+      error: error.message, // 👈 return real reason
+    });
   }
 };
 
@@ -87,7 +91,6 @@ export const deleteSchedule = async (req, res) => {
   }
 };
 
-
 // =============================
 // MEMBER SCHEDULES
 // =============================
@@ -98,7 +101,9 @@ export const assignMemberSchedules = async (req, res) => {
     const { memberId, scheduleIds } = req.body;
 
     if (!memberId || !scheduleIds?.length) {
-      return res.status(400).json({ error: "memberId and scheduleIds required" });
+      return res
+        .status(400)
+        .json({ error: "memberId and scheduleIds required" });
     }
 
     await scheduleModel.assignMemberSchedules(memberId, scheduleIds);
@@ -116,7 +121,7 @@ export const removeMemberSchedule = async (req, res) => {
 
     const affected = await scheduleModel.removeMemberSchedule(
       memberId,
-      scheduleId
+      scheduleId,
     );
 
     if (affected === 0) {
@@ -132,13 +137,14 @@ export const removeMemberSchedule = async (req, res) => {
 // 🔹 Get member schedules
 export const getMemberSchedules = async (req, res) => {
   try {
-    const schedules = await scheduleModel.getMemberSchedules(req.params.memberId);
+    const schedules = await scheduleModel.getMemberSchedules(
+      req.params.memberId,
+    );
     res.json(schedules);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch member schedules" });
   }
 };
-
 
 // =============================
 // COACH SCHEDULES
@@ -150,7 +156,9 @@ export const assignCoachSchedules = async (req, res) => {
     const { coachId, scheduleIds } = req.body;
 
     if (!coachId || !scheduleIds?.length) {
-      return res.status(400).json({ error: "coachId and scheduleIds required" });
+      return res
+        .status(400)
+        .json({ error: "coachId and scheduleIds required" });
     }
 
     await scheduleModel.assignCoachSchedules(coachId, scheduleIds);
@@ -168,7 +176,7 @@ export const removeCoachSchedule = async (req, res) => {
 
     const affected = await scheduleModel.removeCoachSchedule(
       coachId,
-      scheduleId
+      scheduleId,
     );
 
     if (affected === 0) {

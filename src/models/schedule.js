@@ -1,14 +1,18 @@
 // schedules.js
 
-import { db } from '../config/db.js';
+import { db } from "../config/db.js";
 // 🔹 Create schedule
-export const createSchedule = async data => {
+export const createSchedule = async (data) => {
   const { date, time } = data;
+
+  if (!date || !time) {
+    throw new Error("date and time are required");
+  }
 
   const [result] = await db.execute(
     `INSERT INTO schedule (date, time)
      VALUES (?, ?)`,
-    [date, time]
+    [date, time],
   );
 
   return result.insertId;
@@ -22,17 +26,17 @@ export const getAllSchedules = async () => {
       date,
       time
     FROM schedule
-    ORDER BY date, time
+    
   `);
 
   return rows;
 };
 
 // 🔹 Get single schedule
-export const getScheduleById = async id => {
+export const getScheduleById = async (id) => {
   const [rows] = await db.execute(
     `SELECT id, date, time FROM schedule WHERE id = ?`,
-    [id]
+    [id],
   );
 
   return rows[0];
@@ -46,14 +50,14 @@ export const updateSchedule = async (id, data) => {
     `UPDATE schedule
      SET date = ?, time = ?
      WHERE id = ?`,
-    [date, time, id]
+    [date, time, id],
   );
 
   return result.affectedRows;
 };
 
 // 🔹 Delete schedule
-export const deleteSchedule = async id => {
+export const deleteSchedule = async (id) => {
   const [result] = await db.execute(`DELETE FROM schedule WHERE id = ?`, [id]);
 
   return result.affectedRows;
@@ -63,35 +67,35 @@ export const deleteSchedule = async id => {
 
 // 🔹 Assign schedules to a member
 export const assignMemberSchedules = async (memberId, scheduleIds) => {
-  const values = scheduleIds.map(scheduleId => [memberId, scheduleId]);
+  const values = scheduleIds.map((scheduleId) => [memberId, scheduleId]);
 
   const [result] = await db.query(
     `INSERT INTO member_schedules (member_id, schedule_id)
      VALUES ?
      ON DUPLICATE KEY UPDATE schedule_id = schedule_id`,
-    [values]
+    [values],
   );
 
   return result;
 };
 
 // 🔹 Remove a schedule from a member
-export const removeMemberSchedules = async memberId => {
+export const removeMemberSchedules = async (memberId) => {
   const [result] = await db.query(
     `DELETE FROM member_schedules WHERE member_id = ?`,
-    [memberId]
+    [memberId],
   );
   return result.affectedRows;
 };
 
 // 🔹 Get member schedules
-export const getMemberSchedules = async memberId => {
+export const getMemberSchedules = async (memberId) => {
   const [rows] = await db.query(
     `SELECT s.*
      FROM member_schedules ms
      JOIN schedule s ON ms.schedule_id = s.id
      WHERE ms.member_id = ?`,
-    [memberId]
+    [memberId],
   );
 
   return rows;
@@ -102,34 +106,35 @@ export const getMemberSchedules = async memberId => {
 export const assignCoachSchedules = async (coachId, scheduleIds) => {
   if (!scheduleIds?.length) return;
 
-  const values = scheduleIds.map(scheduleId => [coachId, scheduleId]);
+  const placeholders = scheduleIds.map(() => "(?, ?)").join(", ");
+  const values = scheduleIds.flatMap((id) => [coachId, id]);
 
-  const [result] = await db.query(
+  const [result] = await db.execute(
     `INSERT INTO coach_schedules (coach_id, schedule_id)
-     VALUES ?
+     VALUES ${placeholders}
      ON DUPLICATE KEY UPDATE schedule_id = schedule_id`,
-    [values]
+    values,
   );
 
   return result;
 };
 // 🔹 Get coach schedules
-export const getCoachSchedules = async coachId => {
+export const getCoachSchedules = async (coachId) => {
   const [rows] = await db.query(
     `SELECT s.*
      FROM coach_schedules cs
      JOIN schedule s ON cs.schedule_id = s.id
      WHERE cs.coach_id = ?`,
-    [coachId]
+    [coachId],
   );
 
   return rows;
 };
 // 🔹 Remove schedule from a coach
-export const removeCoachSchedule = async coachId => {
+export const removeCoachSchedule = async (coachId) => {
   const [result] = await db.query(
     `DELETE FROM coach_schedules WHERE coach_id = ?`,
-    [coachId]
+    [coachId],
   );
   return result.affectedRows;
 };

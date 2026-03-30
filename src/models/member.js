@@ -1,9 +1,9 @@
 // members.js
 
-import { db } from '../config/db.js';
+import { db } from "../config/db.js";
 
 // Create Member
-export const createMember = async member => {
+export const createMember = async (member) => {
   const {
     name,
     gender,
@@ -19,10 +19,10 @@ export const createMember = async member => {
     `INSERT INTO members 
     (name, gender, b_date, address_id, phone, url, ras_id, payment_status) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [name, gender, b_date, address_id, phone, url, ras_id, payment_status]
+    [name, gender, b_date, address_id, phone, url, ras_id, payment_status],
   );
 
-  return { id: result.insertId, ...member, payment_status };
+  return result.insertId;
 };
 
 // Update Member
@@ -42,7 +42,7 @@ export const updateMember = async (id, member) => {
     `UPDATE members 
      SET name=?, gender=?, b_date=?, address_id=?, phone=?, url=?, ras_id=?, payment_status=? 
      WHERE id=?`,
-    [name, gender, b_date, address_id, phone, url, ras_id, payment_status, id]
+    [name, gender, b_date, address_id, phone, url, ras_id, payment_status, id],
   );
 
   return result.affectedRows;
@@ -60,7 +60,7 @@ export const getAllMembers = async () => {
 };
 
 // Get Single Member
-export const getMemberById = async id => {
+export const getMemberById = async (id) => {
   const [rows] = await db.execute(
     `
     SELECT m.*, a.sub_city, a.woreda
@@ -68,14 +68,14 @@ export const getMemberById = async id => {
     LEFT JOIN address a ON m.address_id = a.id
     WHERE m.id = ?
     `,
-    [id]
+    [id],
   );
 
   return rows[0];
 };
 
 // Delete Member
-export const deleteMember = async id => {
-  const [result] = await db.execute('DELETE FROM members WHERE id = ?', [id]);
+export const deleteMember = async (id) => {
+  const [result] = await db.execute("DELETE FROM members WHERE id = ?", [id]);
   return result.affectedRows;
 };
