@@ -7,7 +7,7 @@ import {
 
 const router = express.Router();
 
-// 🔹 routes
+// routes
 router.get("/:id/fullprofile", getCoachProfile);
 router.post("/fullregister", registerCoach);
 router.delete("/:id/fulldelete", deleteCoach);

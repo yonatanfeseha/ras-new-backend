@@ -1,7 +1,7 @@
 // schedules.js
 
 import { db } from "../config/db.js";
-// 🔹 Create schedule
+// Create schedule
 export const createSchedule = async (data) => {
   const { date, time } = data;
 
@@ -18,7 +18,7 @@ export const createSchedule = async (data) => {
   return result.insertId;
 };
 
-// 🔹 Get all schedules
+// Get all schedules
 export const getAllSchedules = async () => {
   const [rows] = await db.execute(`
     SELECT 
@@ -32,7 +32,7 @@ export const getAllSchedules = async () => {
   return rows;
 };
 
-// 🔹 Get single schedule
+// Get single schedule
 export const getScheduleById = async (id) => {
   const [rows] = await db.execute(
     `SELECT id, date, time FROM schedule WHERE id = ?`,
@@ -42,7 +42,7 @@ export const getScheduleById = async (id) => {
   return rows[0];
 };
 
-// 🔹 Update schedule
+// Update schedule
 export const updateSchedule = async (id, data) => {
   const { date, time } = data;
 
@@ -56,7 +56,7 @@ export const updateSchedule = async (id, data) => {
   return result.affectedRows;
 };
 
-// 🔹 Delete schedule
+// Delete schedule
 export const deleteSchedule = async (id) => {
   const [result] = await db.execute(`DELETE FROM schedule WHERE id = ?`, [id]);
 
@@ -64,8 +64,7 @@ export const deleteSchedule = async (id) => {
 };
 
 // assignment of schedules
-
-// 🔹 Assign schedules to a member
+// Assign schedules to a member
 export const assignMemberSchedules = async (memberId, scheduleIds) => {
   const values = scheduleIds.map((scheduleId) => [memberId, scheduleId]);
 
@@ -79,7 +78,7 @@ export const assignMemberSchedules = async (memberId, scheduleIds) => {
   return result;
 };
 
-// 🔹 Remove a schedule from a member
+// Remove a schedule from a member
 export const removeMemberSchedules = async (memberId) => {
   const [result] = await db.query(
     `DELETE FROM member_schedules WHERE member_id = ?`,
@@ -88,7 +87,7 @@ export const removeMemberSchedules = async (memberId) => {
   return result.affectedRows;
 };
 
-// 🔹 Get member schedules
+// Get member schedules
 export const getMemberSchedules = async (memberId) => {
   const [rows] = await db.query(
     `SELECT s.*
@@ -101,8 +100,8 @@ export const getMemberSchedules = async (memberId) => {
   return rows;
 };
 
-// assignment of coaches to schedules
-// 🔹 Assign schedules to a coach
+// assignment to a coaches
+// Assign schedules to a coach
 export const assignCoachSchedules = async (coachId, scheduleIds) => {
   if (!scheduleIds?.length) return;
 
@@ -118,7 +117,8 @@ export const assignCoachSchedules = async (coachId, scheduleIds) => {
 
   return result;
 };
-// 🔹 Get coach schedules
+
+// Get coach schedules
 export const getCoachSchedules = async (coachId) => {
   const [rows] = await db.query(
     `SELECT s.*
@@ -130,7 +130,8 @@ export const getCoachSchedules = async (coachId) => {
 
   return rows;
 };
-// 🔹 Remove schedule from a coach
+
+// Remove schedule from a coach
 export const removeCoachSchedule = async (coachId) => {
   const [result] = await db.query(
     `DELETE FROM coach_schedules WHERE coach_id = ?`,

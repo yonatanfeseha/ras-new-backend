@@ -1,5 +1,3 @@
-// health.js
-
 import { db } from "../config/db.js";
 
 // Create health

@@ -1,6 +1,6 @@
 import { db } from "../config/db.js";
 
-// 🔹 Get all coaches
+// Get all coaches
 export const getAllCoaches = async () => {
   const [rows] = await db.query(`SELECT * FROM coach`);
   return rows;
@@ -12,7 +12,7 @@ export const getCoachById = async (id) => {
   return rows[0];
 };
 
-// 🔹 Create coach
+// Create coach
 export const createCoach = async (data) => {
   const { name, gender, b_date, address_id, phone, url } = data;
   const [result] = await db.query(
@@ -37,7 +37,7 @@ export const updateCoach = async (id, data) => {
   return result.affectedRows;
 };
 
-// 🔹 Delete coach
+// Delete coach
 export const deleteCoach = async (id) => {
   const [result] = await db.query(`DELETE FROM coach WHERE id = ?`, [id]);
   return result.affectedRows;
@@ -45,7 +45,7 @@ export const deleteCoach = async (id) => {
 
 // ================= MEMBER-COACH ASSIGNMENT =================
 
-// 🔹 Get member's coaches
+// Get member's coaches
 export const getMemberCoaches = async (memberId) => {
   const [rows] = await db.query(
     `SELECT c.*
@@ -57,7 +57,7 @@ export const getMemberCoaches = async (memberId) => {
   return rows;
 };
 
-// 🔹 Assign coaches to member (batch)
+// Assign coaches to member (batch)
 export const assignCoaches = async (memberId, coachIds) => {
   if (!coachIds || coachIds.length === 0) return;
   const values = coachIds.map((id) => [memberId, id]);
@@ -70,7 +70,7 @@ export const assignCoaches = async (memberId, coachIds) => {
   return result;
 };
 
-// 🔹 Remove coach from member
+// Remove coach from member
 export const removeCoach = async (memberId, coachId) => {
   const [result] = await db.query(
     `DELETE FROM member_coaches

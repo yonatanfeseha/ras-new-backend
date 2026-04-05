@@ -13,6 +13,7 @@ import coachRoutes from "./routes/coach.routes.js";
 import memberServiceRoutes from "./routes/memberService.routes.js";
 import coachServiceRoutes from "./routes/coachService.routes.js";
 import addressRoutes from "./routes/address.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 
 dotenv.config();
 
@@ -34,6 +35,8 @@ app.use("/api/coaches", coachRoutes);
 app.use("/api/training-types", trainingTypeRoutes);
 app.use("/api/member-service", memberServiceRoutes);
 app.use("/api/coach-service", coachServiceRoutes);
+app.use("/api/auth", authRoutes);
+
 // health check
 app.get("/", (req, res) => {
   res.send("API is running...");

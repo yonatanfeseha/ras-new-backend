@@ -1,1 +1,0 @@
-touch member.routes.js health.routes.js emergency.routes.js schedule.routes.js trainingType.routes.js stats.routes.js

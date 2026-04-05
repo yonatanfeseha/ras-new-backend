@@ -13,7 +13,7 @@ router.put("/:id", scheduleController.updateSchedule);
 router.delete("/:id", scheduleController.deleteSchedule);
 
 // =============================
-// 🔥 MEMBER SCHEDULES
+// MEMBER SCHEDULES
 // =============================
 
 // get all schedules for a member
@@ -26,7 +26,7 @@ router.post("/member/assign", scheduleController.assignMemberSchedules);
 router.delete("/member/remove", scheduleController.removeMemberSchedule);
 
 // =============================
-// 🔥 COACH SCHEDULES
+// COACH SCHEDULES
 // =============================
 
 // get schedules for coach

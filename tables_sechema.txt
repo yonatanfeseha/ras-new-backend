@@ -101,12 +101,9 @@ Table coach_training_types {
 //// for auth
 
 Table users {
-  id int [pk, increment]
-  email varchar(255) [unique]
+  id varchar(25)
   password varchar(255)
-  role enum('admin','coach','member')
-  member_id int [null]
-  coach_id int [null]
+  role varchar(25)
 }
 
 //// RELATIONSHIPS
@@ -134,5 +131,5 @@ Ref: coach_training_types.training_type_id > training_type.id
 
 //// for auth 
 
-Ref: users.member_id > members.id
-Ref: users.coach_id > coach.id
+Ref: users.id = members.res_id
+Ref: users.id = coach.ras_id

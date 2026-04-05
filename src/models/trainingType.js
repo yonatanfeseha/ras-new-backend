@@ -1,6 +1,6 @@
 import { db } from "../config/db.js";
 
-// 🔹 CRUD Training Types
+// CRUD Training Types
 export const getAllTrainingTypes = async () => {
   const [rows] = await db.query(`SELECT * FROM training_type ORDER BY t_type`);
   return rows;
@@ -40,7 +40,7 @@ export const deleteTrainingType = async (id) => {
 
 // ================= MEMBER-TRAINING TYPE =================
 
-// 🔹 Get member training types
+// Get member training types
 export const getMemberTrainingTypes = async (memberId) => {
   const [rows] = await db.query(
     `SELECT t.*
@@ -52,7 +52,7 @@ export const getMemberTrainingTypes = async (memberId) => {
   return rows;
 };
 
-// 🔹 Assign training types to member
+// Assign training types to member
 export const assignTrainingTypes = async (memberId, typeIds) => {
   if (!typeIds || typeIds.length === 0) return;
   const values = typeIds.map((id) => [memberId, id]);
@@ -65,7 +65,7 @@ export const assignTrainingTypes = async (memberId, typeIds) => {
   return result;
 };
 
-// 🔹 Remove training type from member
+// Remove training type from member
 export const removeMemberTrainingTypes = async (memberId) => {
   const [result] = await db.query(
     `DELETE FROM member_training_types WHERE member_id = ?`,
@@ -75,7 +75,7 @@ export const removeMemberTrainingTypes = async (memberId) => {
 };
 
 // ================= coach-TRAINING TYPE =================
-// 🔹 Get training types for a coach
+// Get training types for a coach
 export const getCoachTrainingTypes = async (coachId) => {
   const [rows] = await db.query(
     `SELECT t.*
@@ -87,7 +87,7 @@ export const getCoachTrainingTypes = async (coachId) => {
   return rows;
 };
 
-// 🔹 Assign training types to a coach (batch)
+// Assign training types to a coach (batch)
 export const assignTrainingTypesToCoach = async (coachId, typeIds) => {
   if (!typeIds?.length) return;
 
@@ -101,7 +101,7 @@ export const assignTrainingTypesToCoach = async (coachId, typeIds) => {
   }
 };
 
-// 🔹 Remove a training type from a coach
+// Remove a training type from a coach
 export const removeCoachTrainingType = async (coachId) => {
   const [result] = await db.query(
     `DELETE FROM coach_training_types WHERE coach_id = ?`,

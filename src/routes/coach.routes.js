@@ -4,10 +4,10 @@ import * as coachController from "../controllers/coach.controller.js";
 const router = express.Router();
 
 // =============================
-// 🔹 COACH CRUD
+// COACH CRUD
 // =============================
 
-// ⚠️ put specific routes first
+// put specific routes first
 router.get("/member/:memberId", coachController.getMemberCoaches);
 
 router.get("/", coachController.getCoaches);
@@ -16,13 +16,11 @@ router.post("/", coachController.createCoach);
 router.put("/:id", coachController.updateCoach);
 router.delete("/:id", coachController.deleteCoach);
 
-
 // =============================
-// 🔥 MEMBER-COACH
+// MEMBER-COACH
 // =============================
 
 router.post("/member/assign", coachController.assignCoaches);
 router.delete("/member/remove", coachController.removeCoachFromMember);
-
 
 export default router;
