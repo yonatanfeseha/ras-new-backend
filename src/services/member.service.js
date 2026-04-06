@@ -62,12 +62,22 @@ export const registerMemberFull = async (memberData) => {
     emergency,
     scheduleIds,
     trainingTypeIds,
-    ras_id,
     password,
   } = memberData;
 
   // Create member
-  const memberId = await memberModel.createMember({ name, gender, b_date });
+  const memberId = await memberModel.createMember({
+    name,
+    gender,
+    b_date,
+  });
+
+  // Generate ras_id from real ID
+  const year = new Date().getFullYear().toString().slice(-2);
+  const ras_id = `RAS/${String(memberId).padStart(4, "0")}/${year}`;
+
+  // Update member with ras_id
+  await memberModel.updateRasId(memberId, ras_id);
 
   // Create health and emergency records
   await Promise.all([
@@ -82,7 +92,7 @@ export const registerMemberFull = async (memberData) => {
     userService.registerUser({
       id: ras_id,
       password: password || 123456,
-      role: "memeber",
+      role: "member",
     }),
   ]);
 

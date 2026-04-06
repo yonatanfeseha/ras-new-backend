@@ -12,7 +12,6 @@ router.get("/member/:memberId", coachController.getMemberCoaches);
 
 router.get("/", coachController.getCoaches);
 router.get("/:id", coachController.getCoach);
-router.post("/", coachController.createCoach);
 router.put("/:id", coachController.updateCoach);
 router.delete("/:id", coachController.deleteCoach);
 

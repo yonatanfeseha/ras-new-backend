@@ -29,45 +29,10 @@ export const getCoach = async (req, res) => {
   }
 };
 
-// Create coach
-export const createCoach = async (req, res) => {
-  try {
-    const { name, gender, b_date, address_id, phone, url, ras_id } = req.body;
-
-    // validation
-    if (!name || !gender || !b_date) {
-      return res.status(400).json({
-        error: "name, gender, and b_date are required",
-      });
-    }
-
-    if (!["male", "female"].includes(gender.toLowerCase())) {
-      return res.status(400).json({ error: "Gender must be male or female" });
-    }
-
-    const result = await coachModel.createCoach({
-      name,
-      gender,
-      b_date,
-      address_id,
-      phone,
-      url,
-      ras_id,
-    });
-
-    res.status(201).json({
-      message: "Coach created",
-      ...result,
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create coach" });
-  }
-};
-
 // Update coach
 export const updateCoach = async (req, res) => {
   try {
-    const { name, gender, b_date, address_id, phone, url, ras_id } = req.body;
+    const { name, gender, b_date, address_id, phone, url } = req.body;
 
     if (!name || !gender || !b_date) {
       return res.status(400).json({
@@ -89,7 +54,6 @@ export const updateCoach = async (req, res) => {
       address_id,
       phone,
       url,
-      ras_id,
     });
 
     res.json({

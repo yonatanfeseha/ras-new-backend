@@ -31,13 +31,12 @@ export const registerCoachFull = async (coachData) => {
       url,
       scheduleIds,
       trainingTypeIds,
-      ras_id,
       password,
     } = coachData;
 
     // Basic validation
-    if (!name || !phone || !ras_id) {
-      throw new Error("Name, phone, and ras_id are required");
+    if (!name || !phone) {
+      throw new Error("Name and phone are required");
     }
 
     if (!Array.isArray(scheduleIds) || !scheduleIds.length) {
@@ -56,8 +55,12 @@ export const registerCoachFull = async (coachData) => {
       address_id,
       phone,
       url,
-      ras_id,
     });
+
+    const year = new Date().getFullYear().toString().slice(-2);
+    const ras_id = `RAS/${String(coachId).padStart(4, "0")}/${year}`;
+
+    await coachModel.updateRasId(coachId, ras_id);
 
     await Promise.all([
       scheduleModel.assignCoachSchedules(coachId, scheduleIds),

@@ -1,6 +1,6 @@
 import * as coachService from "../services/coach.service.js";
 
-// 🔹 FULL PROFILE
+// FULL PROFILE
 export const getCoachProfile = async (req, res) => {
   try {
     const profile = await coachService.getFullCoachProfile(req.params.id);
@@ -15,7 +15,7 @@ export const getCoachProfile = async (req, res) => {
   }
 };
 
-// 🔹 FULL REGISTER
+// FULL REGISTER
 export const registerCoach = async (req, res) => {
   try {
     const result = await coachService.registerCoachFull(req.body);
@@ -29,7 +29,7 @@ export const registerCoach = async (req, res) => {
   }
 };
 
-// 🔹 FULL DELETE
+// FULL DELETE
 export const deleteCoach = async (req, res) => {
   try {
     await coachService.deleteCoachFull(req.params.id);
