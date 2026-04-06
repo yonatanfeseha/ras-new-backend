@@ -6,7 +6,7 @@ export const getAllCoaches = async () => {
   return rows;
 };
 
-// 🔹 Get single coach
+// Get single coach
 export const getCoachById = async (id) => {
   const [rows] = await db.query(`SELECT * FROM coach WHERE id = ?`, [id]);
   return rows[0];
@@ -14,24 +14,24 @@ export const getCoachById = async (id) => {
 
 // Create coach
 export const createCoach = async (data) => {
-  const { name, gender, b_date, address_id, phone, url } = data;
+  const { name, gender, b_date, address_id, phone, url, ras_id } = data;
   const [result] = await db.query(
-    `INSERT INTO coach (name, gender, b_date, address_id, phone, url)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [name, gender, b_date, address_id, phone, url],
+    `INSERT INTO coach (name, gender, b_date, address_id, phone, url, ras_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [name, gender, b_date, address_id, phone, url, ras_id],
   );
   return result.insertId;
 };
 
-// 🔹 Update coach
+// Update coach
 export const updateCoach = async (id, data) => {
-  const { name, gender, b_date, address_id, phone, url } = data;
+  const { name, gender, b_date, address_id, phone, url, ras_id } = data;
 
   const [result] = await db.query(
     `UPDATE coach
-     SET name = ?, gender = ?, b_date = ?, address_id = ?, phone = ?, url = ?
+     SET name = ?, gender = ?, b_date = ?, address_id = ?, phone = ?, url = ?, ras_id = ?
      WHERE id = ?`,
-    [name, gender, b_date, address_id, phone, url, id],
+    [name, gender, b_date, address_id, phone, url, ras_id, id],
   );
 
   return result.affectedRows;
@@ -67,7 +67,7 @@ export const assignCoaches = async (memberId, coachIds) => {
      ON DUPLICATE KEY UPDATE coach_id = coach_id`,
     [values],
   );
-  return result;
+  return result.affectedRows;
 };
 
 // Remove coach from member

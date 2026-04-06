@@ -1,4 +1,3 @@
-
 import * as memberModel from "../models/member.js";
 import * as healthModel from "../models/health.js";
 import * as emergencyModel from "../models/emergency.js";
@@ -36,7 +35,7 @@ export const deleteMemberFull = async (memberId) => {
   // 🔹 check existence
   const member = await memberModel.getMemberById(memberId);
   if (!member) {
-    throw new Error('Member not found');
+    throw new Error("Member not found");
   }
 
   // 🔹 delete relations first, then member
@@ -50,26 +49,41 @@ export const deleteMemberFull = async (memberId) => {
   await memberModel.deleteMember(memberId);
 
   return {
-    message: 'Member deleted successfully',
+    message: "Member deleted successfully",
   };
 };
 
 export const registerMemberFull = async (memberData) => {
-  const { name, gender, b_date, health, emergency, scheduleIds, trainingTypeIds } = memberData;
+  const {
+    name,
+    gender,
+    b_date,
+    health,
+    emergency,
+    scheduleIds,
+    trainingTypeIds,
+    ras_id,
+    password,
+  } = memberData;
 
-  // 🔹 Create member
+  // Create member
   const memberId = await memberModel.createMember({ name, gender, b_date });
 
-  // 🔹 Create health and emergency records
+  // Create health and emergency records
   await Promise.all([
     healthModel.createHealth({ memberId, ...health }),
     emergencyModel.createEmergencyContact({ memberId, ...emergency }),
   ]);
 
-  // 🔹 Assign schedules and training types
+  // Assign schedules and training types
   await Promise.all([
     scheduleModel.assignMemberSchedules(memberId, scheduleIds),
     trainingModel.assignTrainingTypes(memberId, trainingTypeIds),
+    userService.registerUser({
+      id: ras_id,
+      password: password || 123456,
+      role: "memeber",
+    }),
   ]);
 
   return { memberId };

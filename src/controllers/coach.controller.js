@@ -1,10 +1,10 @@
 import * as coachModel from "../models/coach.js";
 
 // =============================
-// 🔹 COACH CRUD
+// COACH CRUD
 // =============================
 
-// 🔹 Get all coaches
+// Get all coaches
 export const getCoaches = async (req, res) => {
   try {
     const coaches = await coachModel.getAllCoaches();
@@ -14,7 +14,7 @@ export const getCoaches = async (req, res) => {
   }
 };
 
-// 🔹 Get single coach
+// Get single coach
 export const getCoach = async (req, res) => {
   try {
     const coach = await coachModel.getCoachById(req.params.id);
@@ -29,19 +29,18 @@ export const getCoach = async (req, res) => {
   }
 };
 
-// 🔹 Create coach
+// Create coach
 export const createCoach = async (req, res) => {
   try {
-    const { name, gender, b_date, address_id, phone, url } = req.body;
+    const { name, gender, b_date, address_id, phone, url, ras_id } = req.body;
 
-    // ✅ validation
+    // validation
     if (!name || !gender || !b_date) {
       return res.status(400).json({
         error: "name, gender, and b_date are required",
       });
     }
 
-    // optional validation (basic)
     if (!["male", "female"].includes(gender.toLowerCase())) {
       return res.status(400).json({ error: "Gender must be male or female" });
     }
@@ -53,6 +52,7 @@ export const createCoach = async (req, res) => {
       address_id,
       phone,
       url,
+      ras_id,
     });
 
     res.status(201).json({
@@ -64,10 +64,10 @@ export const createCoach = async (req, res) => {
   }
 };
 
-// 🔹 Update coach
+// Update coach
 export const updateCoach = async (req, res) => {
   try {
-    const { name, gender, b_date, address_id, phone, url } = req.body;
+    const { name, gender, b_date, address_id, phone, url, ras_id } = req.body;
 
     if (!name || !gender || !b_date) {
       return res.status(400).json({
@@ -89,6 +89,7 @@ export const updateCoach = async (req, res) => {
       address_id,
       phone,
       url,
+      ras_id,
     });
 
     res.json({
@@ -100,7 +101,7 @@ export const updateCoach = async (req, res) => {
   }
 };
 
-// 🔹 Delete coach
+// Delete coach
 export const deleteCoach = async (req, res) => {
   try {
     const affected = await coachModel.deleteCoach(req.params.id);
@@ -116,10 +117,10 @@ export const deleteCoach = async (req, res) => {
 };
 
 // =============================
-// 🔥 MEMBER-COACH RELATION
+// MEMBER-COACH RELATION
 // =============================
 
-// 🔹 Get member coaches
+// Get member coaches
 export const getMemberCoaches = async (req, res) => {
   try {
     const coaches = await coachModel.getMemberCoaches(req.params.memberId);
@@ -129,7 +130,7 @@ export const getMemberCoaches = async (req, res) => {
   }
 };
 
-// 🔹 Assign coaches to member
+// Assign coaches to member
 export const assignCoaches = async (req, res) => {
   try {
     const { memberId, coachIds } = req.body;
@@ -148,7 +149,7 @@ export const assignCoaches = async (req, res) => {
   }
 };
 
-// 🔹 Remove coach from member
+// Remove coach from member
 export const removeCoachFromMember = async (req, res) => {
   try {
     const { memberId, coachId } = req.body;

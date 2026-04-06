@@ -1,6 +1,7 @@
 import * as coachModel from "../models/coach.js";
 import * as scheduleModel from "../models/schedule.js";
 import * as trainingModel from "../models/trainingType.js";
+import * as userService from "./user.service.js";
 
 // FULL PROFILE
 export const getFullCoachProfile = async (coachId) => {
@@ -30,11 +31,13 @@ export const registerCoachFull = async (coachData) => {
       url,
       scheduleIds,
       trainingTypeIds,
+      ras_id,
+      password,
     } = coachData;
 
-    // ✅ Basic validation
-    if (!name || !phone) {
-      throw new Error("Name and phone are required");
+    // Basic validation
+    if (!name || !phone || !ras_id) {
+      throw new Error("Name, phone, and ras_id are required");
     }
 
     if (!Array.isArray(scheduleIds) || !scheduleIds.length) {
@@ -45,7 +48,7 @@ export const registerCoachFull = async (coachData) => {
       throw new Error("trainingTypeIds must be a non-empty array");
     }
 
-    // ✅ Create coach (make sure this returns insertId)
+    // Create coach (make sure this returns insertId)
     const coachId = await coachModel.createCoach({
       name,
       gender,
@@ -53,11 +56,17 @@ export const registerCoachFull = async (coachData) => {
       address_id,
       phone,
       url,
+      ras_id,
     });
 
     await Promise.all([
       scheduleModel.assignCoachSchedules(coachId, scheduleIds),
       trainingModel.assignTrainingTypesToCoach(coachId, trainingTypeIds),
+      userService.registerUser({
+        id: ras_id,
+        password: password || 123456,
+        role: "coach",
+      }),
     ]);
 
     return { coachId };
