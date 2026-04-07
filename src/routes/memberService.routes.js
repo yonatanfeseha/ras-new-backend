@@ -1,15 +1,24 @@
 import express from "express";
-import {
-  getMemberProfile,
-  registerMember,
-  deleteMember,
-} from "../controllers/memberService.controller.js";
+import * as memberServiceController from "../controllers/memberService.controller.js";
+import * as authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// 🔹 routes
-router.get("/:id/fullprofile", getMemberProfile);
-router.post("/fullregister", registerMember);
-router.delete("/:id/fulldelete", deleteMember);
+// routes
+router.get(
+  "/:id/fullprofile",
+  authMiddleware.verifyToken,
+  memberServiceController.getMemberProfile,
+);
+router.post(
+  "/fullregister",
+  authMiddleware.verifyToken,
+  memberServiceController.registerMember,
+);
+router.delete(
+  "/:id/fulldelete",
+  authMiddleware.verifyToken,
+  memberServiceController.deleteMember,
+);
 
 export default router;
