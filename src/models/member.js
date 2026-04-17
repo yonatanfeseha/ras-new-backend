@@ -49,12 +49,18 @@ export const updateMember = async (id, member) => {
 };
 
 // Get All Members
-export const getAllMembers = async () => {
-  const [rows] = await db.execute(`
+export const getAllMembers = async (page = 1, limit = 15) => {
+  const offset = (page - 1) * limit;
+
+  const [rows] = await db.execute(
+    `
     SELECT m.*, a.sub_city, a.woreda
     FROM members m
     LEFT JOIN address a ON m.address_id = a.id
-  `);
+    LIMIT ? OFFSET ?
+  `,
+    [limit, offset],
+  );
 
   return rows;
 };

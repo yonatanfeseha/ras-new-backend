@@ -15,30 +15,10 @@ router.get(
   coachController.getMemberCoaches,
 );
 
-router.get(
-  "/",
-  authMiddleware.verifyToken,
-  authMiddleware.authorizeRoles("admin"),
-  coachController.getCoaches,
-);
-router.get(
-  "/:id",
-  authMiddleware.verifyToken,
-  authMiddleware.authorizeRoles("admin", "coach"),
-  coachController.getCoach,
-);
-router.put(
-  "/:id",
-  authMiddleware.verifyToken,
-  authMiddleware.authorizeRoles("admin", "coach"),
-  coachController.updateCoach,
-);
-router.delete(
-  "/:id",
-  authMiddleware.verifyToken,
-  authMiddleware.authorizeRoles("admin"),
-  coachController.deleteCoach,
-);
+router.get("/", authMiddleware.verifyToken, coachController.getCoaches);
+router.get("/:id", authMiddleware.verifyToken, coachController.getCoach);
+router.put("/:id", authMiddleware.verifyToken, coachController.updateCoach);
+router.delete("/:id", authMiddleware.verifyToken, coachController.deleteCoach);
 
 // =============================
 // MEMBER-COACH
@@ -47,13 +27,11 @@ router.delete(
 router.post(
   "/member/assign",
   authMiddleware.verifyToken,
-  authMiddleware.authorizeRoles("admin"),
   coachController.assignCoaches,
 );
 router.delete(
   "/member/remove",
   authMiddleware.verifyToken,
-  authMiddleware.authorizeRoles("admin"),
   coachController.removeCoachFromMember,
 );
 
