@@ -3,16 +3,20 @@ import jwt from "jsonwebtoken";
 export const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  const token = authHeader?.split(" ")[1];
+  if (!authHeader) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: "No token provided" });
+    return res.status(401).json({ message: "Malformed token" });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = decoded;
+    req.user = decoded; // { id, role, iat, exp }
 
     next();
   } catch (err) {
@@ -26,6 +30,10 @@ export const verifyToken = (req, res, next) => {
 
 export const authorizeRoles = (...roles) => {
   return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({ message: "Forbidden" });
     }
