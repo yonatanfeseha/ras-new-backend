@@ -4,7 +4,7 @@ import * as emergencyModel from "../models/emergency.js";
 export const getEmergencyContact = async (req, res) => {
   try {
     const contact = await emergencyModel.getEmergencyContact(
-      req.params.memberId
+      req.params.memberId,
     );
 
     if (!contact) {
@@ -30,10 +30,11 @@ export const createEmergencyContact = async (req, res) => {
       });
     }
 
-    const result = await emergencyModel.createEmergencyContact(
-      memberId,
-      { contact_name, phone, relationship }
-    );
+    const result = await emergencyModel.createEmergencyContact(memberId, {
+      contact_name,
+      phone,
+      relationship,
+    });
 
     res.status(201).json({
       message: "Emergency contact created",
@@ -82,7 +83,7 @@ export const updateEmergencyContact = async (req, res) => {
 export const deleteEmergencyContact = async (req, res) => {
   try {
     const affected = await emergencyModel.deleteEmergencyContact(
-      req.params.memberId
+      req.params.memberId,
     );
 
     if (affected === 0) {

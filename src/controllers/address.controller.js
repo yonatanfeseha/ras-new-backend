@@ -32,7 +32,9 @@ export const createAddress = async (req, res) => {
 
     // ✅ validation
     if (!sub_city || !woreda) {
-      return res.status(400).json({ error: "sub_city and woreda are required" });
+      return res
+        .status(400)
+        .json({ error: "sub_city and woreda are required" });
     }
 
     const result = await addressModel.createAddress({ sub_city, woreda });
@@ -52,7 +54,9 @@ export const updateAddress = async (req, res) => {
     const { sub_city, woreda } = req.body;
 
     if (!sub_city || !woreda) {
-      return res.status(400).json({ error: "sub_city and woreda are required" });
+      return res
+        .status(400)
+        .json({ error: "sub_city and woreda are required" });
     }
 
     // check existence (since model doesn't return affectedRows)

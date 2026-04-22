@@ -66,7 +66,7 @@ export const login = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "Strict",
+      sameSite: "none",
     });
     res.json({
       accessToken: accessToken,
@@ -108,7 +108,7 @@ export const refresh = async (req, res) => {
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: "none",
     });
 
     // 6. send new access token
