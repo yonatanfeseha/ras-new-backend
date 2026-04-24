@@ -5,54 +5,98 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+/* =========================
+   Helpers
+========================= */
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: true, // Render / HTTPS
+  sameSite: "none",
+  path: "/",
+};
+
+const clearCookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: "/",
+};
+
 const generateAccessToken = (user) => {
-  const token = jwt.sign(
-    { id: user.id, role: user.role },
+  return jwt.sign(
+    {
+      id: user.id,
+      role: user.role,
+    },
     process.env.ACCESS_TOKEN_SECRET,
     {
       expiresIn: "15m",
     },
   );
-  return token;
 };
+
 const generateRefreshToken = (user) => {
-  const token = jwt.sign(
-    { id: user.id, role: user.role },
+  return jwt.sign(
+    {
+      id: user.id,
+      role: user.role,
+    },
     process.env.REFRESH_TOKEN_SECRET,
     {
       expiresIn: "90d",
     },
   );
-  return token;
 };
+
+/* =========================
+   Register
+========================= */
 
 export const register = async (req, res) => {
   try {
     const { id, password, role } = req.body;
 
     if (!id || !password || !role) {
-      return res.status(400).json({ message: "Missing fields" });
+      return res.status(400).json({
+        message: "Missing fields",
+      });
     }
 
-    const user = await userService.registerUser({ id, password, role });
+    const user = await userService.registerUser({
+      id,
+      password,
+      role,
+    });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "User created successfully",
       user,
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({
+      message: error.message,
+    });
   }
 };
+
+/* =========================
+   Login
+========================= */
 
 export const login = async (req, res) => {
   try {
     const { id, password } = req.body;
 
-    const user = await userService.authenticateUser({ id, password });
+    const user = await userService.authenticateUser({
+      id,
+      password,
+    });
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
     }
 
     const accessToken = generateAccessToken(user);
@@ -63,40 +107,46 @@ export const login = async (req, res) => {
 
     await refreshService.saveToken(user.id, refreshToken, expiresAt);
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    });
-    res.json({
-      accessToken: accessToken,
+    res.cookie("refreshToken", refreshToken, cookieOptions);
+
+    return res.json({
+      accessToken,
       role: user.role,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({
+      message: "Server error",
+    });
   }
 };
+
+/* =========================
+   Refresh
+========================= */
 
 export const refresh = async (req, res) => {
   const token = req.cookies.refreshToken;
 
-  if (!token) return res.sendStatus(401);
+  if (!token) {
+    return res.sendStatus(401);
+  }
 
   try {
-    // 1. verify JWT
+    // verify JWT
     const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
-    // 2. check DB (VERY IMPORTANT)
+    // verify token in DB
     await refreshService.verifyToken(decoded.id, token);
 
-    // 3. generate new tokens (rotation)
+    // generate new tokens
     const newAccessToken = generateAccessToken(decoded);
+
     const newRefreshToken = generateRefreshToken(decoded);
 
-    // 4. rotate in DB
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 90);
 
+    // rotate token in DB
     await refreshService.rotateToken(
       decoded.id,
       token,
@@ -104,28 +154,46 @@ export const refresh = async (req, res) => {
       expiresAt,
     );
 
-    // 5. set new cookie
-    res.cookie("refreshToken", newRefreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-    });
+    // send fresh cookie
+    res.cookie("refreshToken", newRefreshToken, cookieOptions);
 
-    // 6. send new access token
-    res.json({ accessToken: newAccessToken });
-  } catch (err) {
+    return res.json({
+      accessToken: newAccessToken,
+    });
+  } catch (error) {
+    // invalid / stale token -> clear cookie
+    res.clearCookie("refreshToken", clearCookieOptions);
+
     return res.sendStatus(403);
   }
 };
 
+/* =========================
+   Logout
+========================= */
+
 export const logout = async (req, res) => {
-  const token = req.cookies.refreshToken;
+  try {
+    const token = req.cookies.refreshToken;
 
-  if (token) {
-    const decoded = jwt.decode(token);
-    await refreshService.deleteToken(decoded.id, token);
+    if (token) {
+      try {
+        const decoded = jwt.decode(token);
+
+        if (decoded?.id) {
+          await refreshService.deleteToken(decoded.id, token);
+        }
+      } catch (error) {
+        // ignore decode errors
+      }
+    }
+
+    res.clearCookie("refreshToken", clearCookieOptions);
+
+    return res.sendStatus(204);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Logout failed",
+    });
   }
-
-  res.clearCookie("refreshToken");
-  res.sendStatus(204);
 };

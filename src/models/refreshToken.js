@@ -9,7 +9,7 @@ export const saveRefreshToken = async (userId, tokenHash, expiresAt) => {
 
 export const findRefreshToken = async (userId, tokenHash) => {
   const [rows] = await db.execute(
-    "SELECT * FROM refresh_tokens WHERE user_id = ? AND token = ?",
+    "SELECT * FROM refresh_tokens WHERE user_id = ? AND token = ? AND expires_at > NOW()",
     [userId, tokenHash],
   );
   return rows[0] ?? null;
