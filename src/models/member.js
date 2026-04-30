@@ -52,17 +52,34 @@ export const updateMember = async (id, member) => {
 export const getAllMembers = async (page = 1, limit = 15) => {
   const offset = (page - 1) * limit;
 
+  // 1. get data
   const [rows] = await db.execute(
     `
     SELECT m.*, a.sub_city, a.woreda
     FROM members m
     LEFT JOIN address a ON m.address_id = a.id
     LIMIT ? OFFSET ?
-  `,
+    `,
     [limit, offset],
   );
 
-  return rows;
+  // 2. get total count
+  const [countResult] = await db.execute(
+    `SELECT COUNT(*) as total FROM members`,
+  );
+
+  const total = countResult[0].total;
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data: rows,
+    pagination: {
+      total,
+      totalPages,
+      page,
+      limit,
+    },
+  };
 };
 
 // Get Single Member

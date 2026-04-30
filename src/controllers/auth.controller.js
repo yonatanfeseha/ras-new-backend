@@ -128,13 +128,9 @@ export const refresh = async (req, res) => {
   }
 
   try {
-    console.log("COOKIE TOKEN:", token);
-
     const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-    console.log("DECODED:", decoded);
 
     await refreshService.verifyToken(decoded.id, token);
-    console.log("TOKEN EXISTS IN DB");
 
     const newAccessToken = generateAccessToken(decoded);
     const newRefreshToken = generateRefreshToken(decoded);

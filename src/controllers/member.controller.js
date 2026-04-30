@@ -6,12 +6,17 @@ import * as memberModel from "../models/member.js";
 
 // Get all
 export const getMembers = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 15;
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
 
-  const members = await memberModel.getAllMembers(page, limit);
+    const result = await memberModel.getAllMembers(page, limit);
 
-  res.json(members);
+    res.json(result);
+  } catch (err) {
+    console.error("GET MEMBERS ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
 };
 
 // Get one
