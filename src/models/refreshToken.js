@@ -26,9 +26,16 @@ export const deleteAllUserTokens = async (userId) => {
   await db.execute("DELETE FROM refresh_tokens WHERE user_id = ?", [userId]);
 };
 
-setInterval(
-  async () => {
-    await db.execute("DELETE FROM refresh_tokens WHERE expires_at < NOW()");
-  },
-  1000 * 60 * 60 * 24,
-); // every 1 day
+export const updateRefreshToken = async (
+  userId,
+  oldTokenHash,
+  newTokenHash,
+  expiresAt,
+) => {
+  await db.execute(
+    `UPDATE refresh_tokens 
+     SET token = ?, expires_at = ? 
+     WHERE user_id = ? AND token = ?`,
+    [newTokenHash, expiresAt, userId, oldTokenHash],
+  );
+};

@@ -11,16 +11,16 @@ dotenv.config();
 
 const cookieOptions = {
   httpOnly: true,
-  secure: true, // Render / HTTPS
-  sameSite: "none",
-  path: "/",
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  path: "/", // MUST BE THE SAME
 };
 
 const clearCookieOptions = {
   httpOnly: true,
-  secure: true,
-  sameSite: "none",
-  path: "/",
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  path: "/", // MUST BE THE SAME
 };
 
 const generateAccessToken = (user) => {
@@ -43,9 +43,6 @@ const generateRefreshToken = (user) => {
       role: user.role,
     },
     process.env.REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: "90d",
-    },
   );
 };
 
@@ -74,9 +71,8 @@ export const register = async (req, res) => {
       user,
     });
   } catch (error) {
-    return res.status(400).json({
-      message: error.message,
-    });
+    console.error("REFRESH ERROR:", error.message); // <--- ADD THIS
+    return res.sendStatus(401);
   }
 };
 
@@ -128,25 +124,24 @@ export const refresh = async (req, res) => {
   const token = req.cookies.refreshToken;
 
   if (!token) {
-    return res.sendStatus(401);
+    return res.sendStatus(403);
   }
 
   try {
-    // verify JWT
+    console.log("COOKIE TOKEN:", token);
+
     const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    console.log("DECODED:", decoded);
 
-    // verify token in DB
     await refreshService.verifyToken(decoded.id, token);
+    console.log("TOKEN EXISTS IN DB");
 
-    // generate new tokens
     const newAccessToken = generateAccessToken(decoded);
-
     const newRefreshToken = generateRefreshToken(decoded);
-
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 90);
 
-    // rotate token in DB
+    // Rotate
     await refreshService.rotateToken(
       decoded.id,
       token,
@@ -154,17 +149,23 @@ export const refresh = async (req, res) => {
       expiresAt,
     );
 
-    // send fresh cookie
+    // Set new cookie
     res.cookie("refreshToken", newRefreshToken, cookieOptions);
 
-    return res.json({
-      accessToken: newAccessToken,
-    });
+    return res.json({ accessToken: newAccessToken, role: decoded.role });
   } catch (error) {
-    // invalid / stale token -> clear cookie
-    res.clearCookie("refreshToken", clearCookieOptions);
+    console.error("Refresh Error:", error.message);
 
-    return res.sendStatus(403);
+    // ONLY clear cookie if the token is actually bad/expired
+    if (
+      error.name === "JsonWebTokenError" ||
+      error.name === "TokenExpiredError" ||
+      error.message === "Invalid Token"
+    ) {
+      res.clearCookie("refreshToken", clearCookieOptions);
+    }
+
+    return res.sendStatus(401);
   }
 };
 

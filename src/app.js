@@ -19,13 +19,17 @@ import authRoutes from "./routes/auth.routes.js";
 dotenv.config();
 
 const app = express();
-
 // middleware
 app.use(express.json());
+
+app.use(cookieParser()); // MUST be before routes
+
 app.use(
   cors({
-    origin: "http://localhost:8080",
-    credentials: true,
+    origin: "http://localhost:5173", // Replace with your ACTUAL frontend URL
+    credentials: true, // REQUIRED for cookies to work
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 app.use(morgan("dev"));
