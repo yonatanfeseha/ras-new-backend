@@ -10,12 +10,18 @@ export const getMembers = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 15;
 
-    const result = await memberModel.getAllMembers(page, limit);
+    // SEARCH TERM
+    const search = req.query.search || "";
+
+    const result = await memberModel.getAllMembers(page, limit, search);
 
     res.json(result);
   } catch (err) {
     console.error("GET MEMBERS ERROR:", err);
-    res.status(500).json({ message: err.message });
+
+    res.status(500).json({
+      message: err.message,
+    });
   }
 };
 

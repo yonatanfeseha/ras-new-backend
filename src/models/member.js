@@ -48,24 +48,55 @@ export const updateMember = async (id, member) => {
   return result.affectedRows;
 };
 
-// Get All Members
-export const getAllMembers = async (page = 1, limit = 15) => {
+// Get All Members + Global Search
+export const getAllMembers = async (page = 1, limit = 15, search = "") => {
   const offset = (page - 1) * limit;
 
-  // 1. get data
+  const searchValue = `%${search}%`;
+
+  // 1. GET FILTERED DATA
   const [rows] = await db.execute(
     `
-    SELECT m.*, a.sub_city, a.woreda
+    SELECT 
+      m.*, 
+      a.sub_city, 
+      a.woreda
     FROM members m
     LEFT JOIN address a ON m.address_id = a.id
+    WHERE
+      m.name LIKE ?
+      OR m.phone LIKE ?
+      OR m.ras_id LIKE ?
+      OR a.sub_city LIKE ?
+      OR a.woreda LIKE ?
+    ORDER BY m.id DESC
     LIMIT ? OFFSET ?
     `,
-    [limit, offset],
+    [
+      searchValue,
+      searchValue,
+      searchValue,
+      searchValue,
+      searchValue,
+      limit,
+      offset,
+    ],
   );
 
-  // 2. get total count
+  // 2. GET TOTAL FILTERED COUNT
   const [countResult] = await db.execute(
-    `SELECT COUNT(*) as total FROM members`,
+    `
+    SELECT COUNT(*) as total
+    FROM members m
+    LEFT JOIN address a ON m.address_id = a.id
+    WHERE
+      m.name LIKE ?
+      OR m.phone LIKE ?
+      OR m.ras_id LIKE ?
+      OR a.sub_city LIKE ?
+      OR a.woreda LIKE ?
+    `,
+    [searchValue, searchValue, searchValue, searchValue, searchValue],
   );
 
   const total = countResult[0].total;
@@ -81,7 +112,6 @@ export const getAllMembers = async (page = 1, limit = 15) => {
     },
   };
 };
-
 // Get Single Member
 export const getMemberById = async (id) => {
   const [rows] = await db.execute(
