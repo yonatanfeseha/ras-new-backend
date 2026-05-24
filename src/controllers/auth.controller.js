@@ -110,9 +110,8 @@ export const login = async (req, res) => {
       role: user.role,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: "Server error",
-    });
+    console.log(error);
+    throw error;
   }
 };
 

@@ -4,6 +4,7 @@ import * as emergencyModel from "../models/emergency.js";
 import * as scheduleModel from "../models/schedule.js";
 import * as trainingModel from "../models/trainingType.js";
 import * as coachModel from "../models/coach.js";
+import * as userService from "./user.service.js";
 
 // =============================
 // FULL PROFILE
@@ -55,46 +56,45 @@ export const deleteMemberFull = async (memberId) => {
 
 export const registerMemberFull = async (memberData) => {
   const {
-    name,
-    gender,
-    b_date,
+    member,
     health,
     emergency,
-    scheduleIds,
-    trainingTypeIds,
+    scheduleIds = [],
+    trainingTypeIds = [],
+    coachIds = [],
     password,
   } = memberData;
 
-  // Create member
-  const memberId = await memberModel.createMember({
-    name,
-    gender,
-    b_date,
-  });
+  // create member first
+  const memberId = await memberModel.createMember(member);
 
-  // Generate ras_id from real ID
+  // generate ras id
   const year = new Date().getFullYear().toString().slice(-2);
+
   const ras_id = `RAS/${String(memberId).padStart(4, "0")}/${year}`;
 
-  // Update member with ras_id
+  // update ras id
   await memberModel.updateRasId(memberId, ras_id);
 
-  // Create health and emergency records
+  // related data
   await Promise.all([
-    healthModel.createHealth({ memberId, ...health }),
-    emergencyModel.createEmergencyContact({ memberId, ...emergency }),
+    healthModel.createHealth(memberId, health),
+    emergencyModel.createEmergencyContact(memberId, emergency),
   ]);
 
-  // Assign schedules and training types
+  // optional relations
   await Promise.all([
     scheduleModel.assignMemberSchedules(memberId, scheduleIds),
     trainingModel.assignTrainingTypes(memberId, trainingTypeIds),
-    userService.registerUser({
-      id: ras_id,
-      password: password || 123456,
-      role: "member",
-    }),
+    coachModel.assignCoaches(memberId, coachIds),
   ]);
 
-  return { memberId };
+  // auth
+  await userService.registerUser({
+    id: ras_id,
+    password: password ?? "123456",
+    role: "member",
+  });
+
+  return { memberId, ras_id };
 };

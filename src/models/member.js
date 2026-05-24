@@ -11,18 +11,28 @@ export const createMember = async (member) => {
     address_id,
     phone,
     url,
-    ras_id,
     payment_status = 0,
   } = member;
 
   const [result] = await db.execute(
-    `INSERT INTO members 
-    (name, gender, b_date, address_id, phone, url, ras_id, payment_status) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [name, gender, b_date, address_id, phone, url, ras_id, payment_status],
+    `INSERT INTO members
+    (name, gender, b_date, address_id, phone, url, payment_status)
+    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [name, gender, b_date, address_id, phone, url, payment_status],
   );
 
   return result.insertId;
+};
+
+export const updateRasId = async (memberId, ras_id) => {
+  const [result] = await db.execute(
+    `UPDATE members
+     SET ras_id = ?
+     WHERE id = ?`,
+    [ras_id, memberId],
+  );
+
+  return result.affectedRows;
 };
 
 // Update Member
