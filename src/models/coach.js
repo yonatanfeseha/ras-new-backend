@@ -6,6 +6,17 @@ export const getAllCoaches = async () => {
   return rows;
 };
 
+export const updateRasId = async (coachId, ras_id) => {
+  const [result] = await db.execute(
+    `UPDATE coach
+     SET ras_id = ?
+     WHERE id = ?`,
+    [ras_id, coachId],
+  );
+
+  return result.affectedRows;
+};
+
 // Get single coach
 export const getCoachById = async (id) => {
   const [rows] = await db.query(`SELECT * FROM coach WHERE id = ?`, [id]);
@@ -14,11 +25,11 @@ export const getCoachById = async (id) => {
 
 // Create coach
 export const createCoach = async (data) => {
-  const { name, gender, b_date, address_id, phone, url, ras_id } = data;
+  const { name, gender, b_date, address_id, phone, url } = data;
   const [result] = await db.query(
-    `INSERT INTO coach (name, gender, b_date, address_id, phone, url, ras_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [name, gender, b_date, address_id, phone, url, ras_id],
+    `INSERT INTO coach (name, gender, b_date, address_id, phone, url)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [name, gender, b_date, address_id, phone, url],
   );
   return result.insertId;
 };
