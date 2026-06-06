@@ -75,6 +75,7 @@ export const getAllMembers = async (page = 1, limit = 15, search = "") => {
     LEFT JOIN address a ON m.address_id = a.id
     WHERE
       m.name LIKE ?
+      OR m.url LIKE ?
       OR m.phone LIKE ?
       OR m.ras_id LIKE ?
       OR a.sub_city LIKE ?
@@ -83,6 +84,10 @@ export const getAllMembers = async (page = 1, limit = 15, search = "") => {
     LIMIT ? OFFSET ?
     `,
     [
+      searchValue,
+      searchValue,
+      searchValue,
+      searchValue,
       searchValue,
       searchValue,
       searchValue,
@@ -103,10 +108,20 @@ export const getAllMembers = async (page = 1, limit = 15, search = "") => {
       m.name LIKE ?
       OR m.phone LIKE ?
       OR m.ras_id LIKE ?
+      OR m.url LIKE ?
       OR a.sub_city LIKE ?
       OR a.woreda LIKE ?
     `,
-    [searchValue, searchValue, searchValue, searchValue, searchValue],
+    [
+      searchValue,
+      searchValue,
+      searchValue,
+      searchValue,
+      searchValue,
+      searchValue,
+      searchValue,
+      searchValue,
+    ],
   );
 
   const total = countResult[0].total;
