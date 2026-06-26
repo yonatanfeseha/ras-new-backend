@@ -90,9 +90,6 @@ export const getAllMembers = async (page = 1, limit = 15, search = "") => {
       searchValue,
       searchValue,
       searchValue,
-      searchValue,
-      searchValue,
-      searchValue,
       limit,
       offset,
     ],
@@ -113,8 +110,6 @@ export const getAllMembers = async (page = 1, limit = 15, search = "") => {
       OR a.woreda LIKE ?
     `,
     [
-      searchValue,
-      searchValue,
       searchValue,
       searchValue,
       searchValue,

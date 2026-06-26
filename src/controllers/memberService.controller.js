@@ -11,7 +11,12 @@ export const getMemberProfile = async (req, res) => {
 
     res.json(profile);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch member profile" });
+    console.error("FULL PROFILE ERROR:", err);
+
+    res.status(500).json({
+      error: err.message,
+      stack: err.stack,
+    });
   }
 };
 

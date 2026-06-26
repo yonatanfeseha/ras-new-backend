@@ -13,9 +13,8 @@ export const getFullMemberProfile = async (memberId) => {
   const member = await memberModel.getMemberById(memberId);
   if (!member) return null;
 
-  const [img_url, health, emergency, schedules, trainingTypes, coaches] =
+  const [health, emergency, schedules, trainingTypes, coaches] =
     await Promise.all([
-      (img_url = members.url),
       healthModel.getHealthByMember(memberId),
       emergencyModel.getEmergencyContact(memberId),
       scheduleModel.getMemberSchedules(memberId),
@@ -25,7 +24,7 @@ export const getFullMemberProfile = async (memberId) => {
 
   return {
     ...member,
-    img_url,
+    img_url: member.url,
     health,
     emergency,
     schedules,
