@@ -26,7 +26,7 @@ app.use(cookieParser()); // MUST be before routes
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://172.31.209.122:5173"],
+    origin: "http://localhost:5173"
     credentials: true, // REQUIRED for cookies to work
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
