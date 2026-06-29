@@ -19,8 +19,8 @@ const cookieOptions = {
 const clearCookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
-  path: "/", // MUST BE THE SAME
+  sameSite: "none",
+  path: "/",
 };
 
 const generateAccessToken = (user) => {
