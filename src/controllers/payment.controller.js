@@ -3,6 +3,7 @@ import {
   findByReference,
   getMemberPayments,
 } from "../models/payment.js";
+import { updatePaymentStatus } from "../models/member.js";
 
 import { verifyPayment } from "../services/payment.service.js";
 
@@ -42,6 +43,8 @@ export const verifyAndSavePayment = async (req, res) => {
       amount: payment.amount,
       paymentDate: payment.paymentDate,
     });
+
+    await updatePaymentStatus(memberRasId, 1);
 
     return res.status(201).json({
       success: true,

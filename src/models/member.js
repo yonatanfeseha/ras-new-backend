@@ -35,6 +35,15 @@ export const updateRasId = async (memberId, ras_id) => {
   return result.affectedRows;
 };
 
+export const updatePaymentStatus = async (id, status) => {
+  const [result] = await db.execute(
+    `UPDATE members SET payment_status=? WHERE ras_id=?`,
+    [status, id],
+  );
+
+  return result.affectedRows;
+};
+
 // Update Member
 export const updateMember = async (id, member) => {
   const {
