@@ -15,6 +15,7 @@ import memberServiceRoutes from "./routes/memberService.routes.js";
 import coachServiceRoutes from "./routes/coachService.routes.js";
 import addressRoutes from "./routes/address.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.use("/api/training-types", trainingTypeRoutes);
 app.use("/api/member-service", memberServiceRoutes);
 app.use("/api/coach-service", coachServiceRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/payments", paymentRoutes);
 
 // health check
 app.get("/", (req, res) => {
