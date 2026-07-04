@@ -11,15 +11,16 @@ dotenv.config();
 
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "none",
+  secure: false,
+  sameSite: "lax", // ✅ key fix
   path: "/",
+  maxAge: 90 * 24 * 60 * 60 * 1000, // optional but recommended
 };
 
 const clearCookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "none",
+  secure: false,
+  sameSite: "lax",
   path: "/",
 };
 
