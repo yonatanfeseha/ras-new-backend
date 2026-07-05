@@ -71,12 +71,20 @@ export const deleteCoach = async (req, res) => {
     const affected = await coachModel.deleteCoach(req.params.id);
 
     if (affected === 0) {
-      return res.status(404).json({ error: "Coach not found" });
+      return res.status(404).json({ success: false, error: "Coach not found" });
     }
 
-    res.json({ message: "Deleted successfully" });
+    // Returning success signature to match UI toast setups
+    res.json({ success: true, message: "Coach record deleted successfully." });
   } catch (error) {
-    res.status(500).json({ error: "Delete failed" });
+    // 🔴 Exposes exact constraint failures to your node server window
+    console.error(`❌ DELETE COACH CRASH LOG (ID: ${req.params.id}):`, error);
+
+    res.status(500).json({
+      success: false,
+      error: "Delete failed",
+      message: error.message,
+    });
   }
 };
 

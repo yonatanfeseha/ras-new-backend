@@ -50,8 +50,36 @@ export const updateCoach = async (id, data) => {
 
 // Delete coach
 export const deleteCoach = async (id) => {
-  const [result] = await db.query(`DELETE FROM coach WHERE id = ?`, [id]);
-  return result.affectedRows;
+  try {
+    // 1. Fetch the coach's ras_id before deleting them
+    const [coachRows] = await db.query(
+      "SELECT ras_id FROM coach WHERE id = ?",
+      [id],
+    );
+
+    if (coachRows.length > 0) {
+      const rasId = coachRows[0].ras_id;
+
+      // 2. Clear out universal payment records matching via string RAS ID
+      if (rasId) {
+        await db.query("DELETE FROM payments WHERE member_ras_id = ?", [rasId]);
+      }
+
+      // 3. Clear out bridging table links to members matching via integer coach_id
+      await db.query("DELETE FROM member_coaches WHERE coach_id = ?", [id]);
+      await db.query("DELETE FROM coach_schedules WHERE coach_id = ?", [id]);
+      await db.query("DELETE FROM coache_training_types WHERE coach_id = ?", [
+        id,
+      ]);
+    }
+
+    // 4. Finally, safely delete the core coach row
+    const [result] = await db.query("DELETE FROM coach WHERE id = ?", [id]);
+    return result.affectedRows;
+  } catch (error) {
+    console.error("❌ Database Error inside deleteCoach model:", error.message);
+    throw error;
+  }
 };
 
 // ================= MEMBER-COACH ASSIGNMENT =================
