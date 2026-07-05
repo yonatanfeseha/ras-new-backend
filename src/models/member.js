@@ -156,8 +156,62 @@ export const getMemberById = async (id) => {
   return rows[0];
 };
 
-// Delete Member
+// Delete Member safely along with their child table dependencies
 export const deleteMember = async (id) => {
-  const [result] = await db.execute("DELETE FROM members WHERE id = ?", [id]);
-  return result.affectedRows;
+  // 1. Get a dedicated connection from the pool for a transaction
+  const connection = await db.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    // Fetch the ras_id for the payments cleanup
+    const [memberRows] = await connection.execute(
+      "SELECT ras_id FROM members WHERE id = ?",
+      [id],
+    );
+    const rasId = memberRows[0]?.ras_id;
+
+    // 2. Clear out child dependencies sequentially
+    if (rasId) {
+      await connection.execute("DELETE FROM payments WHERE member_ras_id = ?", [
+        rasId,
+      ]);
+    }
+    await connection.execute("DELETE FROM health WHERE member_id = ?", [id]);
+    await connection.execute("DELETE FROM member_coaches WHERE member_id = ?", [
+      id,
+    ]);
+    await connection.execute(
+      "DELETE FROM member_emergency_contacts WHERE member_id = ?",
+      [id],
+    );
+    await connection.execute(
+      "DELETE FROM member_schedules WHERE member_id = ?",
+      [id],
+    );
+    await connection.execute(
+      "DELETE FROM member_training_types WHERE member_id = ?",
+      [id],
+    );
+
+    // 3. Delete the parent profile
+    const [result] = await connection.execute(
+      "DELETE FROM members WHERE id = ?",
+      [id],
+    );
+
+    // 4. Commit everything safely to disk
+    await connection.commit();
+    return result.affectedRows;
+  } catch (error) {
+    // If ANY of the deletes fail, undo everything so data doesn't corrupt
+    await connection.rollback();
+    console.error(
+      "❌ Transaction failed, rolled back successfully:",
+      error.message,
+    );
+    throw error;
+  } finally {
+    connection.release(); // Return connection back to the pool
+  }
 };
