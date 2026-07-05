@@ -79,3 +79,24 @@ export const deleteMember = async (req, res) => {
     });
   }
 };
+
+// for cron job
+
+export const syncMembershipStatus = async (req, res) => {
+  try {
+    const result = await memberModel.updateMembershipStatuses();
+
+    res.status(200).json({
+      success: true,
+      message: "Membership statuses updated successfully.",
+      affectedRows: result.affectedRows,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};

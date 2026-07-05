@@ -13,4 +13,7 @@ router.delete(
   memberController.deleteMember,
 );
 
+// for cron job
+router.post("/sync-memberships", memberController.syncMembershipStatus);
+
 export default router;
