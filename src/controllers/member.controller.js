@@ -66,37 +66,8 @@ export const deleteMember = async (req, res) => {
       return res.status(404).json({ error: "Member not found" });
     }
 
-    // Returning success true matches the standard clean response signature
-    res.json({ success: true, message: "Deleted successfully" });
-  } catch (err) {
-    // 🔴 CRITICAL FIX: This exposes the actual database/foreign key error to your server window
-    console.error(`❌ DELETE MEMBER CRASH LOG (ID: ${req.params.id}):`, err);
-
-    res.status(500).json({
-      success: false,
-      error: "Delete failed",
-      message: err.message, // Optional: send the message to the frontend for easy local debugging
-    });
-  }
-};
-
-// for cron job
-
-export const syncMembershipStatus = async (req, res) => {
-  try {
-    const result = await memberModel.updateMembershipStatuses();
-
-    res.status(200).json({
-      success: true,
-      message: "Membership statuses updated successfully.",
-      affectedRows: result.affectedRows,
-    });
-  } catch (err) {
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.json({ message: "Deleted successfully" });
+  } catch {
+    res.status(500).json({ error: "Delete failed" });
   }
 };
