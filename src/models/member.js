@@ -46,22 +46,13 @@ export const updatePaymentStatus = async (id, status) => {
 
 // Update Member
 export const updateMember = async (id, member) => {
-  const {
-    name,
-    gender,
-    b_date,
-    address_id,
-    phone,
-    url,
-    ras_id,
-    payment_status = 0,
-  } = member;
+  const { name, gender, b_date, address_id, phone, url, ras_id } = member;
 
   const [result] = await db.execute(
     `UPDATE members 
-     SET name=?, gender=?, b_date=?, address_id=?, phone=?, url=?, ras_id=?, payment_status=? 
+     SET name=?, gender=?, b_date=?, address_id=?, phone=?, url=?, ras_id=?
      WHERE id=?`,
-    [name, gender, b_date, address_id, phone, url, ras_id, payment_status, id],
+    [name, gender, b_date, address_id, phone, url, ras_id, id],
   );
 
   return result.affectedRows;
