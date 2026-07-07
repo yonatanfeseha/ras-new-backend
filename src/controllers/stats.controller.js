@@ -1,11 +1,19 @@
-import * as statsModel from "../models/stats.js";
+import { getDashboardStats } from "../models/stats.js";
 
-export const getStats = async (req, res) => {
+export const dashboardStats = async (req, res) => {
   try {
-    const stats = await statsModel.getStats();
-    res.json(stats);
+    const stats = await getDashboardStats();
+
+    res.status(200).json({
+      success: true,
+      data: stats,
+    });
   } catch (err) {
-    console.error("STATS ERROR:", err); // 🔥 IMPORTANT
-    res.status(500).json({ error: err.message });
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to load dashboard statistics.",
+    });
   }
 };

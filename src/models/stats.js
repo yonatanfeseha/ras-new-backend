@@ -1,49 +1,107 @@
-// stats.js
-
 import { db } from "../config/db.js";
 
-export const getStats = async () => {
-  // payment stats
-  const [[totals]] = await db.execute(`
-    SELECT
-      COUNT(*) AS totalMembers,
-      SUM(payment_status = 1) AS paid,
-      SUM(payment_status = 0) AS unpaid,
-      SUM(payment_status = 2) AS warning
-    FROM members
-  `);
+export const getDashboardStats = async () => {
+  const [
+    [totalMembers],
+    [activeMembers],
+    [expiredMembers],
+    [totalCoaches],
+    [totalRevenue],
+    [monthlyRevenue],
+    [todayRevenue],
+    [todayPayments],
+    [genderStats],
+    [trainingStats],
+    [coachStats],
+  ] = await Promise.all([
+    db.query(`
+      SELECT COUNT(*) AS totalMembers
+      FROM members
+    `),
 
-  // training type stats (map IDs to labels)
-  const [trainingRows] = await db.execute(`
-    SELECT 
-      tt.t_type AS type,
-      COUNT(mt.member_id) AS count
-      FROM training_type tt
-    LEFT JOIN member_training_types mt ON tt.id = mt.training_type_id
-    GROUP BY tt.id, tt.t_type;
-  `);
+    db.query(`
+      SELECT COUNT(*) AS activeMembers
+      FROM members
+      WHERE payment_status = 1
+    `),
 
-  // schedule stats (map IDs to labels)
-  const [scheduleRows] = await db.execute(`
-    SELECT 
-      CASE s.id
-        WHEN 1 THEN 'MWF: Morning'
-        WHEN 2 THEN 'MWF: Evening'
-        WHEN 3 THEN 'TTS: Morning'
-        WHEN 4 THEN 'TTS: Evening'
-      END AS schedule,
-      COUNT(ms.member_id) AS count
-    FROM schedule s
-    LEFT JOIN member_schedules ms ON s.id = ms.schedule_id
-    GROUP BY s.id
-  `);
+    db.query(`
+      SELECT COUNT(*) AS expiredMembers
+      FROM members
+      WHERE payment_status = 0
+    `),
+
+    db.query(`
+      SELECT COUNT(*) AS totalCoaches
+      FROM coach
+    `),
+
+    db.query(`
+      SELECT COALESCE(SUM(amount),0) AS totalRevenue
+      FROM payments
+    `),
+
+    db.query(`
+      SELECT COALESCE(SUM(amount),0) AS monthlyRevenue
+      FROM payments
+      WHERE YEAR(payment_date)=YEAR(CURDATE())
+      AND MONTH(payment_date)=MONTH(CURDATE())
+    `),
+
+    db.query(`
+      SELECT COALESCE(SUM(amount),0) AS todayRevenue
+      FROM payments
+      WHERE DATE(payment_date)=CURDATE()
+    `),
+
+    db.query(`
+      SELECT COUNT(*) AS todayPayments
+      FROM payments
+      WHERE DATE(payment_date)=CURDATE()
+    `),
+
+    db.query(`
+      SELECT
+        gender,
+        COUNT(*) AS total
+      FROM members
+      GROUP BY gender
+    `),
+
+    db.query(`
+      SELECT
+        t.t_type,
+        COUNT(mt.member_id) AS members
+      FROM training_type t
+      LEFT JOIN member_training_types mt
+        ON t.id = mt.training_type_id
+      GROUP BY t.id
+      ORDER BY members DESC
+    `),
+
+    db.query(`
+      SELECT
+        c.name,
+        COUNT(mc.member_id) AS members
+      FROM coach c
+      LEFT JOIN member_coaches mc
+        ON c.id = mc.coach_id
+      GROUP BY c.id
+      ORDER BY members DESC
+    `),
+  ]);
 
   return {
-    totalMembers: totals.totalMembers,
-    paid: totals.paid,
-    unpaid: totals.unpaid,
-    warning: totals.warning,
-    trainingType: trainingRows,
-    schedule: scheduleRows,
+    totalMembers: totalMembers[0].totalMembers,
+    activeMembers: activeMembers[0].activeMembers,
+    expiredMembers: expiredMembers[0].expiredMembers,
+    totalCoaches: totalCoaches[0].totalCoaches,
+    totalRevenue: Number(totalRevenue[0].totalRevenue),
+    monthlyRevenue: Number(monthlyRevenue[0].monthlyRevenue),
+    todayRevenue: Number(todayRevenue[0].todayRevenue),
+    todayPayments: todayPayments[0].todayPayments,
+    genderStats,
+    trainingStats,
+    coachStats,
   };
 };
