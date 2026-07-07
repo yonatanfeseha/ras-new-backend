@@ -79,10 +79,11 @@ export const assignMemberSchedules = async (memberId, scheduleIds) => {
 };
 
 // Remove a schedule from a member
-export const removeMemberSchedules = async (memberId) => {
+// Remove a specific schedule from a member
+export const removeMemberSchedule = async (memberId, scheduleId) => {
   const [result] = await db.query(
-    `DELETE FROM member_schedules WHERE member_id = ?`,
-    [memberId],
+    `DELETE FROM member_schedules WHERE member_id = ? AND schedule_id = ?`,
+    [memberId, scheduleId],
   );
   return result.affectedRows;
 };

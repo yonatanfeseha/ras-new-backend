@@ -8,25 +8,9 @@ const router = express.Router();
 // EMERGENCY CONTACT
 // =============================
 
-router.get(
-  "/:memberId",
-  authMiddleware.verifyToken,
-  emergencyController.getEmergencyContact,
-);
-router.post(
-  "/:memberId",
-  authMiddleware.verifyToken,
-  emergencyController.createEmergencyContact,
-);
-router.put(
-  "/:memberId",
-  authMiddleware.verifyToken,
-  emergencyController.updateEmergencyContact,
-);
-router.delete(
-  "/:memberId",
-  authMiddleware.verifyToken,
-  emergencyController.deleteEmergencyContact,
-);
+router.get("/:memberId", emergencyController.getEmergencyContact);
+router.post("/:memberId", emergencyController.createEmergencyContact);
+router.put("/:memberId", emergencyController.updateEmergencyContact);
+router.delete("/:memberId", emergencyController.deleteEmergencyContact);
 
 export default router;

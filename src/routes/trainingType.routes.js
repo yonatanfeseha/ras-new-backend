@@ -7,49 +7,21 @@ const router = express.Router();
 // =============================
 // TRAINING TYPE CRUD
 // =============================
-router.get(
-  "/",
-  authMiddleware.verifyToken,
-  trainingController.getTrainingTypes,
-);
-router.get(
-  "/:id",
-  authMiddleware.verifyToken,
-  trainingController.getTrainingType,
-);
-router.post(
-  "/",
-  authMiddleware.verifyToken,
-  trainingController.createTrainingType,
-);
-router.put(
-  "/:id",
-  authMiddleware.verifyToken,
-  trainingController.updateTrainingType,
-);
-router.delete(
-  "/:id",
-  authMiddleware.verifyToken,
-  trainingController.deleteTrainingType,
-);
+router.get("/", trainingController.getTrainingTypes);
+router.get("/:id", trainingController.getTrainingType);
+router.post("/", trainingController.createTrainingType);
+router.put("/:id", trainingController.updateTrainingType);
+router.delete("/:id", trainingController.deleteTrainingType);
 
 // =============================
 // MEMBER TRAINING TYPES
 // =============================
 
 // get member training types
-router.get(
-  "/member/:memberId",
-  authMiddleware.verifyToken,
-  trainingController.getMemberTrainingTypes,
-);
+router.get("/member/:memberId", trainingController.getMemberTrainingTypes);
 
 // assign training types to member
-router.post(
-  "/member/assign",
-  authMiddleware.verifyToken,
-  trainingController.assignTrainingTypes,
-);
+router.post("/member/assign", trainingController.assignTrainingTypes);
 
 // remove training type from member
 router.delete(
@@ -62,24 +34,12 @@ router.delete(
 // =============================
 
 // get coach training types
-router.get(
-  "/coach/:coachId",
-  authMiddleware.verifyToken,
-  trainingController.getCoachTrainingTypes,
-);
+router.get("/coach/:coachId", trainingController.getCoachTrainingTypes);
 
 // assign training types to coach
-router.post(
-  "/coach/assign",
-  authMiddleware.verifyToken,
-  trainingController.assignTrainingTypesToCoach,
-);
+router.post("/coach/assign", trainingController.assignTrainingTypesToCoach);
 
 // remove training type from coach
-router.delete(
-  "/coach/remove",
-  authMiddleware.verifyToken,
-  trainingController.removeCoachTrainingType,
-);
+router.delete("/coach/remove", trainingController.removeCoachTrainingType);
 
 export default router;
