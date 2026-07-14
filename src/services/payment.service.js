@@ -7,13 +7,13 @@ const api = axios.create({
   },
 });
 
-export async function verifyPayment({ reference, phoneNumber }) {
+export async function verifyPayment({ reference, suffix }) {
+
   const { data } = await api.post(
     `/verify?apiKey=${process.env.VERIFIER_API_KEY}`,
     {
       reference,
-      suffix: process.env.ACCOUNT_SUFFIX,
-      phoneNumber,
+      suffix,
     },
   );
 

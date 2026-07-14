@@ -35,6 +35,15 @@ export const updateRasId = async (memberId, ras_id) => {
   return result.affectedRows;
 };
 
+export const getPaymentStatus = async (memberId) => {
+  const [rows] = await db.execute(
+    `SELECT payment_status FROM members WHERE ras_id = ?;`,
+    [memberId],
+  );
+
+  return rows[0].payment_status;
+};
+
 export const updatePaymentStatus = async (id, status) => {
   const [result] = await db.execute(
     `UPDATE members SET payment_status=? WHERE ras_id=?`,
