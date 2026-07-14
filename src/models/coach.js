@@ -36,13 +36,13 @@ export const createCoach = async (data) => {
 
 // Update coach
 export const updateCoach = async (id, data) => {
-  const { name, gender, b_date, address_id, phone, url, ras_id } = data;
+  const { name, gender, b_date, address_id, phone, url } = data;
 
   const [result] = await db.query(
     `UPDATE coach
-     SET name = ?, gender = ?, b_date = ?, address_id = ?, phone = ?, url = ?, ras_id = ?
+     SET name = ?, gender = ?, b_date = ?, address_id = ?, phone = ?, url = ?
      WHERE id = ?`,
-    [name, gender, b_date, address_id, phone, url, ras_id, id],
+    [name, gender, b_date, address_id, phone, url, id],
   );
 
   return result.affectedRows;

@@ -11,28 +11,20 @@ const router = express.Router();
 // put specific routes first
 router.get(
   "/member/:memberId",
-  authMiddleware.verifyToken,
+
   coachController.getMemberCoaches,
 );
 
-router.get("/", authMiddleware.verifyToken, coachController.getCoaches);
-router.get("/:id", authMiddleware.verifyToken, coachController.getCoach);
-router.put("/:id", authMiddleware.verifyToken, coachController.updateCoach);
-router.delete("/:id", authMiddleware.verifyToken, coachController.deleteCoach);
+router.get("/", coachController.getCoaches);
+router.get("/:id", coachController.getCoach);
+router.put("/:id", coachController.updateCoach);
+router.delete("/:id", coachController.deleteCoach);
 
 // =============================
 // MEMBER-COACH
 // =============================
 
-router.post(
-  "/member/assign",
-  authMiddleware.verifyToken,
-  coachController.assignCoaches,
-);
-router.delete(
-  "/member/remove",
-  authMiddleware.verifyToken,
-  coachController.removeCoachFromMember,
-);
+router.post("/member/assign", coachController.assignCoaches);
+router.delete("/member/remove", coachController.removeCoachFromMember);
 
 export default router;
