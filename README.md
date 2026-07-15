@@ -1,0 +1,87 @@
+# Gym Management Backend
+
+REST API for the gym admin dashboard — handles members, coaches, schedules, payments, and auth. Node/Express + MySQL.
+
+Pairs with the [admin frontend](https://github.com/dawit-808/admin) — that repo has the UI, this one has the data and business logic.
+
+## What it handles
+
+- Auth with access/refresh tokens (refresh token rotated and stored per user, httpOnly cookie)
+- Members, coaches, addresses, emergency contacts
+- Schedules and training types, with coach assignment
+- Payment verification (CBE / Telebirr) — checks for duplicate receipts and prevents double-billing a member in the same cycle
+- A cron job that flips membership status when a subscription lapses
+- Basic stats endpoints for the dashboard (revenue, gender split, coach workload)
+
+## Stack
+
+Express 5, MySQL (mysql2), JWT, bcrypt, node-cron.
+
+## Getting started
+
+You'll need Node 18+ and a MySQL server running.
+
+```bash
+git clone https://github.com/yonatanfeseha/ras-new-backend.git
+cd ras-new-backend
+npm install
+```
+
+Import the schema:
+
+```bash
+mysql -u root -p rashaiix_db < rashaiix_db.sql
+```
+
+Create a `.env` in the root:
+
+```
+PORT=5000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=rashaiix_db
+ACCESS_TOKEN_SECRET=some_long_random_string
+REFRESH_TOKEN_SECRET=another_long_random_string
+```
+
+Run it:
+
+```bash
+npm run dev
+```
+
+Server comes up on `http://localhost:5000`.
+
+## API
+
+Routes are grouped under `/api`:
+
+| Prefix | Handles |
+| `/api/auth` | register, login, refresh, logout |
+| `/api/members` | member CRUD, search, pagination |
+| `/api/coaches` | coach CRUD |
+| `/api/schedules` | class/session scheduling |
+| `/api/training-types` | training type CRUD |
+| `/api/member-service`, `/api/coach-service` | linking members/coaches to services |
+| `/api/address`, `/api/emergency` | member address and emergency contact info |
+| `/api/payments` | payment verification and history |
+| `/api/stats` | dashboard stats |
+
+Protected routes expect an `Authorization: Bearer <token>` header. The refresh token lives in an httpOnly cookie and is rotated on every `/api/auth/refresh` call.
+
+## Notes / known issues
+
+- CORS origin is currently hardcoded to `http://localhost:5173` in `src/app.js` — update this before pointing a deployed frontend at it.
+- Cookie `secure` flag is `false` for local dev — flip to `true` (behind HTTPS) before deploying.
+- No tests yet.
+
+## Scripts
+
+- `npm run dev` — dev server with nodemon
+- `npm start` — production start
+- `npm run cron:update-memberships` — manually run the membership status cron
+
+## Status
+
+Actively developed alongside the frontend. No license yet.
