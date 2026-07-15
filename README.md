@@ -36,11 +36,11 @@ mysql -u root -p rashaiix_db < rashaiix_db.sql
 Create a `.env` in the root:
 
 ```
-PORT=5000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=rashaiix_db
+PORT=port
+DB_HOST=host
+DB_USER=user
+DB_PASSWORD=123..
+DB_NAME=ur-db-name
 ACCESS_TOKEN_SECRET=some_long_random_string
 REFRESH_TOKEN_SECRET=another_long_random_string
 ```
