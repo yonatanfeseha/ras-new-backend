@@ -70,12 +70,6 @@ Routes are grouped under `/api`:
 
 Protected routes expect an `Authorization: Bearer <token>` header. The refresh token lives in an httpOnly cookie and is rotated on every `/api/auth/refresh` call.
 
-## Notes / known issues
-
-- CORS origin is currently hardcoded to `http://localhost:5173` in `src/app.js` — update this before pointing a deployed frontend at it.
-- Cookie `secure` flag is `false` for local dev — flip to `true` (behind HTTPS) before deploying.
-- No tests yet.
-
 ## Scripts
 
 - `npm run dev` — dev server with nodemon
