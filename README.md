@@ -51,8 +51,6 @@ Run it:
 npm run dev
 ```
 
-Server comes up on `http://localhost:5000`.
-
 ## API
 
 Routes are grouped under `/api`:
