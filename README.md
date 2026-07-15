@@ -27,12 +27,6 @@ cd ras-new-backend
 npm install
 ```
 
-Import the schema:
-
-```bash
-mysql -u root -p rashaiix_db < rashaiix_db.sql
-```
-
 Create a `.env` in the root:
 
 ```
