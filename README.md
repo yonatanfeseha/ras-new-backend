@@ -58,6 +58,7 @@ Server comes up on `http://localhost:5000`.
 Routes are grouped under `/api`:
 
 | Prefix | Handles |
+|---|---|
 | `/api/auth` | register, login, refresh, logout |
 | `/api/members` | member CRUD, search, pagination |
 | `/api/coaches` | coach CRUD |
@@ -69,6 +70,12 @@ Routes are grouped under `/api`:
 | `/api/stats` | dashboard stats |
 
 Protected routes expect an `Authorization: Bearer <token>` header. The refresh token lives in an httpOnly cookie and is rotated on every `/api/auth/refresh` call.
+
+## Notes / known issues
+
+- CORS origin is currently hardcoded to `http://localhost:5173` in `src/app.js` — update this before pointing a deployed frontend at it.
+- Cookie `secure` flag is `false` for local dev — flip to `true` (behind HTTPS) before deploying.
+- No tests yet.
 
 ## Scripts
 
