@@ -1,6 +1,6 @@
 # Gym Management Backend
 
-REST API for the gym admin dashboard — handles members, coaches, schedules, payments, and auth. Node/Express + MySQL.
+REST API for the gym admin dashboard handles members, coaches, schedules, payments, and auth. Node/Express + MySQL.
 
 Pairs with the [admin frontend](https://github.com/dawit-808/admin) — that repo has the UI, this one has the data and business logic.
 
@@ -9,7 +9,7 @@ Pairs with the [admin frontend](https://github.com/dawit-808/admin) — that rep
 - Auth with access/refresh tokens (refresh token rotated and stored per user, httpOnly cookie)
 - Members, coaches, addresses, emergency contacts
 - Schedules and training types, with coach assignment
-- Payment verification (CBE / Telebirr) — checks for duplicate receipts and prevents double-billing a member in the same cycle
+- Payment verification (CBE / Telebirr) checks for duplicate receipts and prevents double-billing a member in the same cycle
 - A cron job that flips membership status when a subscription lapses
 - Basic stats endpoints for the dashboard (revenue, gender split, coach workload)
 
