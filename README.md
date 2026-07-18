@@ -71,4 +71,4 @@ Protected routes expect an `Authorization: Bearer <token>` header. The refresh t
 
 ## Status
 
-Actively developed alongside the frontend. No license yet.
+Currently used in production by Ras Hailu Gym for daily member management, payment tracking, and administrative operations.
