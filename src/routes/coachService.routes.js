@@ -4,7 +4,6 @@ import * as authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// routes
 router.get(
   "/:id/fullprofile",
   authMiddleware.verifyToken,
