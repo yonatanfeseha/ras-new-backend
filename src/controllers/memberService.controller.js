@@ -19,6 +19,25 @@ export const getMemberProfile = async (req, res) => {
     });
   }
 };
+export const getMemberVerification = async (req, res) => {
+  try {
+    const member = await memberService.getMemberVerification(req.params.id);
+
+    if (!member) {
+      return res.status(404).json({
+        error: "Member not found",
+      });
+    }
+
+    res.json(member);
+  } catch (err) {
+    console.error("VERIFICATION ERROR:", err);
+
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+};
 
 // FULL REGISTER
 export const registerMember = async (req, res) => {

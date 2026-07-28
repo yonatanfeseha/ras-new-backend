@@ -10,6 +10,7 @@ router.get(
   authMiddleware.verifyToken,
   memberServiceController.getMemberProfile,
 );
+router.get("/:id/verify", memberServiceController.getMemberVerification);
 router.post(
   "/fullregister",
   authMiddleware.verifyToken,

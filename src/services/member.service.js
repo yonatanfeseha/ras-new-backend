@@ -33,6 +33,30 @@ export const getFullMemberProfile = async (memberId) => {
   };
 };
 
+export const getMemberVerification = async (memberId) => {
+  const member = await memberModel.getMemberById(memberId);
+
+  if (!member) return null;
+
+  const [schedules, trainingTypes] = await Promise.all([
+    scheduleModel.getMemberSchedules(memberId),
+    trainingModel.getMemberTrainingTypes(memberId),
+  ]);
+
+  return {
+    full_name: member.full_name,
+    image: member.url,
+    payment_status: member.payment_status,
+
+    training_type: trainingTypes.map((t) => t.t_type),
+
+    schedule: schedules.map((s) => ({
+      date: s.date,
+      time: s.time,
+    })),
+  };
+};
+
 export const deleteMemberFull = async (memberId) => {
   // 🔹 check existence
   const member = await memberModel.getMemberById(memberId);
