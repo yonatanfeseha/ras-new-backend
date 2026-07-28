@@ -5,16 +5,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-/* =========================
-   Helpers
-========================= */
+//  Helpers
 
 const cookieOptions = {
   httpOnly: true,
   secure: false,
-  sameSite: "lax", // ✅ key fix
+  sameSite: "lax",
   path: "/",
-  maxAge: 90 * 24 * 60 * 60 * 1000, // optional but recommended
+  maxAge: 90 * 24 * 60 * 60 * 1000,
 };
 
 const clearCookieOptions = {
@@ -47,9 +45,7 @@ const generateRefreshToken = (user) => {
   );
 };
 
-/* =========================
-   Register
-========================= */
+//  Register
 
 export const register = async (req, res) => {
   try {
@@ -72,14 +68,12 @@ export const register = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error("REFRESH ERROR:", error.message); // <--- ADD THIS
+    console.error("REFRESH ERROR:", error.message);
     return res.sendStatus(401);
   }
 };
 
-/* =========================
-   Login
-========================= */
+//  Login
 
 export const login = async (req, res) => {
   try {
@@ -116,9 +110,7 @@ export const login = async (req, res) => {
   }
 };
 
-/* =========================
-   Refresh
-========================= */
+//  Refresh
 
 export const refresh = async (req, res) => {
   const token = req.cookies.refreshToken;
@@ -165,9 +157,7 @@ export const refresh = async (req, res) => {
   }
 };
 
-/* =========================
-   Logout
-========================= */
+//  Logout
 
 export const logout = async (req, res) => {
   try {

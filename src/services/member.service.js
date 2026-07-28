@@ -6,9 +6,7 @@ import * as trainingModel from "../models/trainingType.js";
 import * as coachModel from "../models/coach.js";
 import * as userService from "./user.service.js";
 
-// =============================
 // FULL PROFILE
-// =============================
 export const getFullMemberProfile = async (memberId) => {
   const member = await memberModel.getMemberById(memberId);
   if (!member) return null;
@@ -56,7 +54,6 @@ export const getMemberVerification = async (memberId) => {
     })),
   };
 };
-
 export const deleteMemberFull = async (memberId) => {
   // 🔹 check existence
   const member = await memberModel.getMemberById(memberId);
@@ -78,7 +75,6 @@ export const deleteMemberFull = async (memberId) => {
     message: "Member deleted successfully",
   };
 };
-
 export const registerMemberFull = async (memberData) => {
   const {
     member,

@@ -4,9 +4,6 @@ import * as authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// =============================
-// EMERGENCY CONTACT
-// =============================
 
 router.get("/:memberId", emergencyController.getEmergencyContact);
 router.post("/:memberId", emergencyController.createEmergencyContact);

@@ -4,11 +4,7 @@ import * as authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// =============================
 // COACH CRUD
-// =============================
-
-// put specific routes first
 router.get(
   "/member/:memberId",
 
@@ -20,9 +16,7 @@ router.get("/:id", coachController.getCoach);
 router.put("/:id", coachController.updateCoach);
 router.delete("/:id", coachController.deleteCoach);
 
-// =============================
 // MEMBER-COACH
-// =============================
 
 router.post("/member/assign", coachController.assignCoaches);
 router.delete("/member/remove", coachController.removeCoachFromMember);

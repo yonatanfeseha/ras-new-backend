@@ -1,14 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://verifyapi.leulzenebe.pro",
+  baseURL: process.env.VERIFIER_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 export async function verifyPayment({ reference, suffix }) {
-
   const { data } = await api.post(
     `/verify?apiKey=${process.env.VERIFIER_API_KEY}`,
     {

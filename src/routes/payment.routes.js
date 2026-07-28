@@ -8,7 +8,6 @@ import {
 const router = Router();
 
 router.post("/verify", verifyAndSavePayment);
-
 router.get("/:memberRasId", getPayments);
 
 export default router;

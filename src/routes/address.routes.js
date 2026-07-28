@@ -4,9 +4,6 @@ import * as authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// =============================
-// ADDRESS CRUD
-// =============================
 
 router.get("/", addressController.getAddresses);
 router.get("/:id", addressController.getAddress);
