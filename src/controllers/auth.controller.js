@@ -7,18 +7,20 @@ dotenv.config();
 
 //  Helpers
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const cookieOptions = {
   httpOnly: true,
-  secure: false,
-  sameSite: "lax",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
   path: "/",
   maxAge: 90 * 24 * 60 * 60 * 1000,
 };
 
 const clearCookieOptions = {
   httpOnly: true,
-  secure: false,
-  sameSite: "lax",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
   path: "/",
 };
 
