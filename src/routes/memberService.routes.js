@@ -4,21 +4,9 @@ import * as authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get(
-  "/:id/fullprofile",
-  authMiddleware.verifyToken,
-  memberServiceController.getMemberProfile,
-);
+router.get("/:id/fullprofile", memberServiceController.getMemberProfile);
 router.get("/:id/verify", memberServiceController.getMemberVerification);
-router.post(
-  "/fullregister",
-  authMiddleware.verifyToken,
-  memberServiceController.registerMember,
-);
-router.delete(
-  "/:id/fulldelete",
-  authMiddleware.verifyToken,
-  memberServiceController.deleteMember,
-);
+router.post("/fullregister", memberServiceController.registerMember);
+router.delete("/:id/fulldelete", memberServiceController.deleteMember);
 
 export default router;
