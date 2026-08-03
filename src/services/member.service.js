@@ -59,18 +59,19 @@ export const getMemberVerification = async (memberId) => {
   };
 };
 export const deleteMemberFull = async (memberId) => {
-  // 🔹 check existence
+  // check existence
   const member = await memberModel.getMemberById(memberId);
   if (!member) {
     throw new Error("Member not found");
   }
 
-  // 🔹 delete relations first, then member
+  // delete relations first, then member
   await Promise.all([
     healthModel.deleteHealth(memberId),
     emergencyModel.deleteEmergencyContact(memberId),
     scheduleModel.removeMemberSchedules(memberId),
     trainingModel.removeMemberTrainingTypes(memberId),
+    coachModel.removeCoaches(memberId),
   ]);
 
   await memberModel.deleteMember(memberId);

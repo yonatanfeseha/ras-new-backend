@@ -34,14 +34,12 @@ export async function createPayment(payment) {
   return result.insertId;
 }
 
-export async function getMemberPayments(memberRasId) {
-  const [rows] = await db.execute(
-    `SELECT *
-     FROM payments
-     WHERE member_ras_id = ?
-     ORDER BY payment_date DESC`,
-    [memberRasId],
+export async function getMemberPayments(memberId) {
+  const [result] = await db.execute(
+    `DELETE FROM payments
+     WHERE member_id = ?`,
+    [memberId],
   );
 
-  return rows;
+  return result;
 }

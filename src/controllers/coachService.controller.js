@@ -36,6 +36,7 @@ export const deleteCoach = async (req, res) => {
 
     res.json({ message: "Coach deleted successfully" });
   } catch (err) {
+    console.log(err);
     if (err.message === "Coach not found") {
       return res.status(404).json({ error: err.message });
     }

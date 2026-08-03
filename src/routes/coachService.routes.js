@@ -4,20 +4,8 @@ import * as authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get(
-  "/:id/fullprofile",
-  authMiddleware.verifyToken,
-  coachServiceController.getCoachProfile,
-);
-router.post(
-  "/fullregister",
-  authMiddleware.verifyToken,
-  coachServiceController.registerCoach,
-);
-router.delete(
-  "/:id/fulldelete",
-  authMiddleware.verifyToken,
-  coachServiceController.deleteCoach,
-);
+router.get("/:id/fullprofile", coachServiceController.getCoachProfile);
+router.post("/fullregister", coachServiceController.registerCoach);
+router.delete("/:id/fulldelete", coachServiceController.deleteCoach);
 
 export default router;

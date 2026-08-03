@@ -61,10 +61,15 @@ export const deleteMember = async (req, res) => {
 
     res.json({ message: "Member deleted successfully" });
   } catch (err) {
+    console.error(err.message);
+
     if (err.message === "Member not found") {
       return res.status(404).json({ error: err.message });
     }
 
-    res.status(500).json({ error: "Member deletion failed" });
+    return res.status(500).json({
+      error: "Member deletion failed",
+      message: err.message,
+    });
   }
 };

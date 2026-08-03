@@ -86,6 +86,12 @@ export const deleteCoachFull = async (coachId) => {
   await Promise.all([
     scheduleModel.removeCoachSchedule(coachId),
     trainingModel.removeCoachTrainingType(coachId),
-    coachModel.deleteCoach(coachId),
+    coachModel.removeMembersFromCoache(coachId),
   ]);
+
+  await coachModel.deleteCoach(coachId);
+
+  return {
+    message: "Coach deleted successfully",
+  };
 };
