@@ -36,15 +36,19 @@ export const getMemberVerification = async (memberId) => {
 
   if (!member) return null;
 
-  const [schedules, trainingTypes] = await Promise.all([
+  const [schedules, trainingTypes, emergency] = await Promise.all([
     scheduleModel.getMemberSchedules(memberId),
     trainingModel.getMemberTrainingTypes(memberId),
+    emergencyModel.getEmergencyContact(memberId),
   ]);
 
   return {
-    full_name: member.full_name,
+    name: member.name,
     image: member.url,
     payment_status: member.payment_status,
+    ras_id: member.ras_id,
+    emergency_name: emergency?.contact_name ?? null,
+    emergency_phone: emergency?.phone ?? null,
 
     training_type: trainingTypes.map((t) => t.t_type),
 
