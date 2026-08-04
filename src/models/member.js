@@ -24,6 +24,36 @@ export const createMember = async (member) => {
   return result.insertId;
 };
 
+// Generate the next sequential RAS ID (format: RAS/0001/26)
+// Uses a row lock on ras_id_counter to stay safe under concurrent registrations
+export const getNextRasId = async () => {
+  const conn = await db.getConnection(); // requires db to be a mysql2 pool
+  try {
+    await conn.beginTransaction();
+
+    const [rows] = await conn.execute(
+      "SELECT current_value FROM ras_id_counter WHERE id = 1 FOR UPDATE",
+    );
+    const nextValue = rows[0].current_value + 1;
+
+    await conn.execute(
+      "UPDATE ras_id_counter SET current_value = ? WHERE id = 1",
+      [nextValue],
+    );
+
+    await conn.commit();
+
+    const seq = String(nextValue).padStart(4, "0");
+    const yearSuffix = String(new Date().getFullYear()).slice(-2);
+    return `RAS/${seq}/${yearSuffix}`;
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    conn.release();
+  }
+};
+
 export const updateRasId = async (memberId, ras_id) => {
   const [result] = await db.execute(
     `UPDATE members

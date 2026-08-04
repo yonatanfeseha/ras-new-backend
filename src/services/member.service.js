@@ -94,10 +94,8 @@ export const registerMemberFull = async (memberData) => {
   // create member first
   const memberId = await memberModel.createMember(member);
 
-  // generate ras id
-  const year = new Date().getFullYear().toString().slice(-2);
-
-  const ras_id = `RAS/${String(memberId).padStart(4, "0")}/${year}`;
+  // generate the next sequential ras id (thread-safe via row lock)
+  const ras_id = await memberModel.getNextRasId();
 
   // update ras id
   await memberModel.updateRasId(memberId, ras_id);

@@ -49,8 +49,10 @@ export const registerMember = async (req, res) => {
       ...result,
     });
   } catch (error) {
-    console.log(error);
-    throw error;
+    console.error("REGISTER MEMBER ERROR:", error);
+    res
+      .status(500)
+      .json({ error: "Registration failed", message: error.message });
   }
 };
 
